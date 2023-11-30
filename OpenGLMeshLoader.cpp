@@ -942,6 +942,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunZ += 0.5;
+						cWarriorZ += 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided) {
 					camera.moveZ(d);
@@ -963,6 +968,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
+						cGunZ -= 0.5;
+						cWarriorZ -= 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided) {
 					camera.moveZ(d);
@@ -982,6 +992,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunX -= 0.5;
+						cWarriorX -= 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided) {
 					camera.moveZ(d);
@@ -1002,6 +1017,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunX += 0.5;
+						cWarriorX += 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveZ(d);
@@ -1023,6 +1043,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
+						cGunZ -= 0.5;
+						cWarriorZ -= 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveZ(-d);
@@ -1041,6 +1066,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunZ += 0.5;
+						cWarriorZ += 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveZ(-d);
@@ -1059,6 +1089,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunX += 0.5;
+						cWarriorX += 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveZ(-d);
@@ -1078,6 +1113,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunX -= 0.5;
+						cWarriorX -= 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveZ(-d);
@@ -1099,6 +1139,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunX += 0.5;
+						cWarriorX += 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveX(d);
@@ -1117,6 +1162,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunX -= 0.5;
+						cWarriorX -= 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveX(d);
@@ -1135,6 +1185,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunZ += 0.5;
+						cWarriorZ += 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveX(d);
@@ -1154,6 +1209,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
+						cGunZ -= 0.5;
+						cWarriorZ -= 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveX(d);
@@ -1175,6 +1235,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunX -= 0.5;
+						cWarriorX -= 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveX(-d);
@@ -1193,6 +1258,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunZ -= 0.5;
+						cWarriorZ -= 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveX(-d);
@@ -1211,6 +1281,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
+						cGunZ -= 0.5;
+						cWarriorZ -= 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveX(-d);
@@ -1229,6 +1304,11 @@ void myKeyboard(unsigned char button, int x, int y)
 						rockCollided = true;
 						break;
 					}
+					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
+						cGunZ += 0.5;
+						cWarriorZ += 0.5;
+						break;
+					}*/
 				}
 				if (!rockCollided)
 					camera.moveX(-d);
@@ -2004,7 +2084,7 @@ void sound(int val) {
 	}
 
 	//glutPostRedisplay();
-	glutTimerFunc(2000, sound, 0);
+	glutTimerFunc(1000, sound, 0);
 }
 
 
