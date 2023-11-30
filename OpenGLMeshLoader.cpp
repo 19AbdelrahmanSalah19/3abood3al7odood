@@ -103,6 +103,10 @@ int whichRock[6];
 float zombiePunchRotateAngle[6]{ 0.0,0.0,0.0,0.0,0.0,0.0 };
 float warriorColor[6];
 int timerPunch[6] = { 2,2,2,2,2,2 };
+int counterForPowerShot = 0;
+bool powerShot = false;
+GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
+
 
 GLuint tex;
 GLuint tex3;
@@ -755,7 +759,6 @@ void myDisplay(void)
 
 
 
-	GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
 	GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
@@ -774,7 +777,9 @@ void myDisplay(void)
 	//sky box
 	glPushMatrix();
 	glTranslated(0, 0, 0);
+	glTranslatef(cGunX, cGunY, cGunZ);
 	glRotated(90, 1, 0, 1);
+	glRotatef(rotateGun, 0, 1, 0);
 	glBindTexture(GL_TEXTURE_2D, tex);
 	gluQuadricTexture(qobj, true);
 	gluQuadricNormals(qobj, GL_SMOOTH);
@@ -867,9 +872,26 @@ void myDisplay(void)
 			for (char c : score) {
 				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
 			}
-		}
-	
+		}	
 	glPopMatrix();
+
+	if (powerShot) {
+		glPushMatrix();
+		glColor3f(0.0, 0.0, 0.0);
+		glTranslatef(cGunX, cGunY, cGunZ);
+		glRotatef(rotateGun, 0, 1, 0);
+		if (firstPersonShooter)
+			glTranslated(-1, 3.5, 0);
+		else
+			glTranslated(-1, 3.5, 5);
+		glRasterPos2i(0, 0);
+
+		std::string powerShot = " PowerShot! ";
+		for (char c : powerShot) {
+			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
+		}
+		glPopMatrix();
+	}
 
 
 
@@ -926,8 +948,10 @@ void myKeyboard(unsigned char button, int x, int y)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		break;
 	case 'k':
-	shootP = true;
-	bulletP = true;
+		if (powerShot) {
+			shootP = true;
+			bulletP = true;
+		}
 	break;
 	case 'w':
 		//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
@@ -1714,6 +1738,13 @@ void shootTimer(int val) {
 						oneZombiePerShot = true;
 						bullet = false;
 						GameScore += 20;
+						if (!powerShot) {
+							counterForPowerShot++;
+							if (counterForPowerShot == 2) {
+								powerShot = true;
+								counterForPowerShot = 0;
+							}
+						}
 					}
 				}
 				else
@@ -1732,58 +1763,67 @@ void shootTimer(int val) {
 		bulletCollidesRock = false;
 	}
 
-	if (shootP && shootTimeP > 0) {
-		/*if (!shootSound) {
-			SoundEngine->play2D("audio/gunShot.mp3", false);
-			shootSound = true;
-		}*/
-		cbulletxP = 0.0;
-		cbulletyP = 0.0;
-		cbulletzP = 0.0;
-		bulletZP -= 2;
-		shootTimeP -= 1;
-		//cbulletz -= 1;
-		if (shootTimeP == 99)
-			shotP = true;
+	if (powerShot) {
+		if (shootP && shootTimeP > 0) {
+			/*if (!shootSound) {
+				SoundEngine->play2D("audio/gunShot.mp3", false);
+				shootSound = true;
+			}*/
+			cbulletxP = 0.0;
+			cbulletyP = 0.0;
+			cbulletzP = 0.0;
+			bulletZP -= 2;
+			shootTimeP -= 1;
+			//cbulletz -= 1;
+			if (shootTimeP == 99)
+				shotP = true;
 
-		float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
-		float sinTheta = sin((rotateGun - angleX) * PI / 180.0);
+			float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
+			float sinTheta = sin((rotateGun - angleX) * PI / 180.0);
 
-		cbulletxP = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(-2*cosTheta)+((bulletZP + 1) * sinTheta) + cGunX;
-		cbulletyP = cbulletyP + 0.5 + cGunY;
-		cbulletzP = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (2*sinTheta)+((bulletZP + 1) * cosTheta) + cGunZ;
-		//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
-		for (int i = 0;i < 6;i++) {
-			if (cbulletxP >= cRockX[i] - 3 && cbulletxP <= cRockX[i] + 3 && cbulletzP >= cRockZ[i] - 3 && cbulletzP <= cRockZ[i] + 3) {
-				bulletCollidesRockP = true;
-				bulletP = false;
-			}
-		}
-		if (!bulletCollidesRockP) {
+			cbulletxP = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(-2 * cosTheta) + ((bulletZP + 1) * sinTheta) + cGunX;
+			cbulletyP = cbulletyP + 0.5 + cGunY;
+			cbulletzP = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZ;
+			//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
 			for (int i = 0;i < 6;i++) {
-				if (cbulletxP > cZombieX[i] - 0.8 && cbulletxP < cZombieX[i] + 1 && cbulletyP>0 && cbulletyP < 8 && cbulletzP >= cZombieZ[i] - 2 && cbulletzP <= cZombieZ[i] + 2) {
-					if (!zombieDied[i] && !collideP[i] && !oneZombiePerShotP) {
-						collideP[i] = true;
-						zombieDied[i] = true;
-						oneZombiePerShotP = true;
-						bulletP = false;
-						GameScore += 20;
-					}
+				if (cbulletxP >= cRockX[i] - 3 && cbulletxP <= cRockX[i] + 3 && cbulletzP >= cRockZ[i] - 3 && cbulletzP <= cRockZ[i] + 3) {
+					bulletCollidesRockP = true;
+					bulletP = false;
 				}
-				else
-					collideP[i] = false;
 			}
+			if (!bulletCollidesRockP) {
+				for (int i = 0;i < 6;i++) {
+					if (cbulletxP > cZombieX[i] - 0.8 && cbulletxP < cZombieX[i] + 1 && cbulletyP>0 && cbulletyP < 8 && cbulletzP >= cZombieZ[i] - 2 && cbulletzP <= cZombieZ[i] + 2) {
+						if (!zombieDied[i] && !collideP[i] && !oneZombiePerShotP) {
+							collideP[i] = true;
+							zombieDied[i] = true;
+							oneZombiePerShotP = true;
+							bulletP = false;
+							GameScore += 20;
+							counterForPowerShot++;
+							if (counterForPowerShot == 2) {
+								powerShot = true;
+								counterForPowerShot = 0;
+							}
+						}
+					}
+					else
+						collideP[i] = false;
+				}
+			}
+			if (shootTimeP == 50)
+				powerShot = false;
 		}
-	}
-	else {
-		//shootSound = false;
-		shootP = false;
-		shootTimeP = 100;
-		bulletZP = 0;
-		cbulletzP = cWarriorZ;
-		oneZombiePerShotP = false;
-		bulletP = false;
-		bulletCollidesRockP = false;
+		else {
+			//shootSound = false;
+			shootP = false;
+			shootTimeP = 100;
+			bulletZP = 0;
+			cbulletzP = cWarriorZ;
+			oneZombiePerShotP = false;
+			bulletP = false;
+			bulletCollidesRockP = false;
+		}
 	}
 	//glTranslatef(10, 4, 0);
 	
@@ -2087,6 +2127,22 @@ void sound(int val) {
 	glutTimerFunc(1000, sound, 0);
 }
 
+void updateLight(int value) {
+	// Decrease the light intensity values
+	for (int i = 0; i < 3; ++i) {
+		lightIntensity[i] -= 0.01f;  // You can adjust the rate of change here
+		if (lightIntensity[i] < 0.0f) {
+			lightIntensity[i] = 0.0f;  // Ensure intensity doesn't go below 0
+		}
+	}
+
+	// Update the light intensity
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+
+	// Schedule the next update
+	glutTimerFunc(1000, updateLight, 0);  // Adjust the timer interval as needed
+}
+
 
 
 //=======================================================================
@@ -2127,6 +2183,7 @@ void main(int argc, char** argv)
 	glutTimerFunc(0, shootRotation, 0);
 	glutTimerFunc(0, zombieGetCloser, 0);
 	glutTimerFunc(0, sound, 0);
+	glutTimerFunc(0, updateLight, 0);
 
 
 	LoadAssets();
