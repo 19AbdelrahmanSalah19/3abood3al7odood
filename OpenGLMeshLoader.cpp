@@ -106,6 +106,9 @@ int timerPunch[6] = { 2,2,2,2,2,2 };
 int counterForPowerShot = 0;
 bool powerShot = false;
 GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
+GLfloat lightIntensity2[] = { 0.7, 0.7, 0.7, 1.0f };
+bool level1 = true;
+bool level2 = false;
 
 
 GLuint tex;
@@ -395,7 +398,7 @@ void InitLightSource()
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 
 	// Finally, define light source 0 position in World Space
-	GLfloat light_position[] = { 0.0f, 10.0f, 0.0f, 1.0f };
+	GLfloat light_position[] = { -140.0f, 10.0f, 250.0f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 }
 
@@ -499,6 +502,77 @@ void RenderGround()
 	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
 
 	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+}
+
+void RenderGround2()
+{
+	glDisable(GL_LIGHTING);	// Disable lighting 
+
+	glColor3f(0.6, 0.6, 0.6);	// Dim the ground texture a bit
+
+	glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
+
+	glBindTexture(GL_TEXTURE_2D, tex_ground.texture[0]);	// Bind the ground texture
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-180, 0, 250);
+	glTexCoord2f(5, 0);
+	glVertex3f(-180, 0, 20);
+	glTexCoord2f(5, 5);
+	glVertex3f(-100, 0, 100);
+	glTexCoord2f(0, 5);
+	glVertex3f(-100, 0, 250);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-180, 0, 20);
+	glTexCoord2f(5, 0);
+	glVertex3f(40, 0, 20);
+	glTexCoord2f(5, 5);
+	glVertex3f(40, 0, 100);
+	glTexCoord2f(0, 5);
+	glVertex3f(-180, 0, 100);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-40, 0, 100);
+	glTexCoord2f(5, 0);
+	glVertex3f(-40, 0, 0);
+	glTexCoord2f(5, 5);
+	glVertex3f(40, 0, 0);
+	glTexCoord2f(0, 5);
+	glVertex3f(40, 0, 100);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-80, 0, 0);
+	glTexCoord2f(5, 0);
+	glVertex3f(80, 0, 0);
+	glTexCoord2f(5, 5);
+	glVertex3f(80, 0, -80);
+	glTexCoord2f(0, 5);
+	glVertex3f(-80, 0, -80);
+	glEnd();
+	glPopMatrix();
+
+	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
+
+	glColor3f(0.5, 0.5, 0.5);	// Set material back to white instead of grey used for the ground texture.
 }
 
 void RenderWall()
@@ -759,103 +833,110 @@ void myDisplay(void)
 
 
 
-	GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
+	GLfloat lightPosition[] = { -140.0f, 0.0f, 250.0f, 0.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
 
 	// Draw Ground
-	RenderGround();
 
-	RenderWall();
+	if (level1) {
+		/*GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
+		glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);*/
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
 
+		RenderGround();
 
+		RenderWall();
 
-
-
-	GLUquadricObj* qobj;
-	qobj = gluNewQuadric();
-	//sky box
-	glPushMatrix();
-	glTranslated(0, 0, 0);
-	glTranslatef(cGunX, cGunY, cGunZ);
-	glRotated(90, 1, 0, 1);
-	glRotatef(rotateGun, 0, 1, 0);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	gluQuadricTexture(qobj, true);
-	gluQuadricNormals(qobj, GL_SMOOTH);
-	gluSphere(qobj, 97.5, 1000, 1000);
-	glPopMatrix();
-
-	/*glPushMatrix();
-	glTranslated(-9, 2, 4);
-	glRotated(rotatefireBall, 0, 1, 0);
-	glBindTexture(GL_TEXTURE_2D, tex3);
-	gluQuadricTexture(qobj, true);
-	gluQuadricNormals(qobj, GL_SMOOTH);
-	gluSphere(qobj, 2, 100, 100);
-	glPopMatrix();*/
+		
 
 
-	
-	//Rock
-	for (int i = 0;i < 6;i++) {
+
+
+		GLUquadricObj* qobj;
+		qobj = gluNewQuadric();
+		//sky box
 		glPushMatrix();
-		glTranslated(cRockX[i], cRockY[i], cRockZ[i]);
-		//glRotated(45, 1, 0, 0);  // Rotate by 45 degrees to create a diamond shape
-		glRotated(-90, 1, 0, 0);  // Rotate by 45 degrees to create a diamond shape
-		//glTranslated(0, -2.5, -2.5);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, tex2);
-
+		glTranslated(0, 0, 0);
+		glTranslatef(cGunX, cGunY, cGunZ);
+		glRotated(90, 1, 0, 1);
+		glRotatef(rotateGun, 0, 1, 0);
+		glBindTexture(GL_TEXTURE_2D, tex);
 		gluQuadricTexture(qobj, true);
 		gluQuadricNormals(qobj, GL_SMOOTH);
-
-		// Create a "cube" using gluCylinder
-		gluCylinder(qobj, 3, 3, 5, 20, 20);  // The base radius should be equal to the desired side length
-
-		glDisable(GL_TEXTURE_2D);
+		gluSphere(qobj, 97.5, 1000, 1000);
 		glPopMatrix();
-	}
+
+		/*glPushMatrix();
+		glTranslated(-9, 2, 4);
+		glRotated(rotatefireBall, 0, 1, 0);
+		glBindTexture(GL_TEXTURE_2D, tex3);
+		gluQuadricTexture(qobj, true);
+		gluQuadricNormals(qobj, GL_SMOOTH);
+		gluSphere(qobj, 2, 100, 100);
+		glPopMatrix();*/
 
 
-	/*glPushMatrix();
-	glTranslatef(15, 4, 0);
-	glRotatef(90, 1, 0, 0);
-	glScalef(0.1, 0.1, 0.1);
-	model_target.Draw();
-	glPopMatrix();*/
 
-	/*glPushMatrix();
-	glTranslatef(4, 1, 0);
-	glRotatef(90, 1, 0, 0);
-	glScalef(0.1, 0.1, 0.1);
-	model_rock.Draw();
-	glPopMatrix();*/
-	for (int i = 0;i < 6; i++) {
-		if (!zombieDied[i]) {
+		//Rock
+		for (int i = 0;i < 6;i++) {
 			glPushMatrix();
-			/*if (collide[i])
-				glColor3d(1, 0, 0);*/
-			/*glTranslatef(10, 4, 0);
-			glRotatef(90, 1, 0, 0);
-			glScalef(0.09, 0.09, 0.09);*/
-			//model_zombie.Draw(i);
-			glTranslatef(cZombieX[i], cZombieY[i], cZombieZ[i]);
-			glRotated(zombiePunchRotateAngle[i], 1, 0, 0);
-			drawZombie(i);
+			glTranslated(cRockX[i], cRockY[i], cRockZ[i]);
+			//glRotated(45, 1, 0, 0);  // Rotate by 45 degrees to create a diamond shape
+			glRotated(-90, 1, 0, 0);  // Rotate by 45 degrees to create a diamond shape
+			//glTranslated(0, -2.5, -2.5);
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, tex2);
+
+			gluQuadricTexture(qobj, true);
+			gluQuadricNormals(qobj, GL_SMOOTH);
+
+			// Create a "cube" using gluCylinder
+			gluCylinder(qobj, 3, 3, 5, 20, 20);  // The base radius should be equal to the desired side length
+
+			glDisable(GL_TEXTURE_2D);
 			glPopMatrix();
 		}
-	}
 
-	glPushMatrix();
-	glColor3f(0.0, 0.0, 0.0);
-	glTranslatef(cGunX, cGunY, cGunZ);
-	glRotatef(rotateGun, 0, 1, 0);
-	if(firstPersonShooter)
-		glTranslated(1, 3.5, 0);
-	else
-		glTranslated(1, 3.5, 5);
-	glRasterPos2i(0, 0);
+
+		/*glPushMatrix();
+		glTranslatef(15, 4, 0);
+		glRotatef(90, 1, 0, 0);
+		glScalef(0.1, 0.1, 0.1);
+		model_target.Draw();
+		glPopMatrix();*/
+
+		/*glPushMatrix();
+		glTranslatef(4, 1, 0);
+		glRotatef(90, 1, 0, 0);
+		glScalef(0.1, 0.1, 0.1);
+		model_rock.Draw();
+		glPopMatrix();*/
+		for (int i = 0;i < 6; i++) {
+			if (!zombieDied[i]) {
+				glPushMatrix();
+				/*if (collide[i])
+					glColor3d(1, 0, 0);*/
+					/*glTranslatef(10, 4, 0);
+					glRotatef(90, 1, 0, 0);
+					glScalef(0.09, 0.09, 0.09);*/
+					//model_zombie.Draw(i);
+				glTranslatef(cZombieX[i], cZombieY[i], cZombieZ[i]);
+				glRotated(zombiePunchRotateAngle[i], 1, 0, 0);
+				drawZombie(i);
+				glPopMatrix();
+			}
+		}
+
+		glPushMatrix();
+		glColor3f(0.0, 0.0, 0.0);
+		glTranslatef(cGunX, cGunY, cGunZ);
+		glRotatef(rotateGun, 0, 1, 0);
+		if (firstPersonShooter)
+			glTranslated(1, 3.5, 0);
+		else
+			glTranslated(1, 3.5, 5);
+		glRasterPos2i(0, 0);
 		if (GameScore == 120) {
 			if (!alamy) {
 				SoundEngine->play2D("audio/perfect.mp3", false);
@@ -872,62 +953,136 @@ void myDisplay(void)
 			for (char c : score) {
 				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
 			}
-		}	
-	glPopMatrix();
+		}
+		glPopMatrix();
 
-	if (powerShot) {
+		if (powerShot) {
+			glPushMatrix();
+			glColor3f(0.0, 0.0, 0.0);
+			glTranslatef(cGunX, cGunY, cGunZ);
+			glRotatef(rotateGun, 0, 1, 0);
+			if (firstPersonShooter)
+				glTranslated(-1, 3.5, 0);
+			else
+				glTranslated(-1, 3.5, 5);
+			glRasterPos2i(0, 0);
+
+			std::string powerShot = " PowerShot! ";
+			for (char c : powerShot) {
+				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
+			}
+			glPopMatrix();
+		}
+
+
+
+		/*glPushMatrix();
+		glTranslatef(4, 1, 0);
+		glRotatef(90, 1, 0, 0);
+		glScalef(1, 1, 1);
+		model_fruit.Draw();
+		glPopMatrix();*/
+
+		glPushMatrix();
+		glColor3d(0.5, 0.5, 0.5);
+		glTranslatef(20, 4.5, -33);
+		glRotatef(rotateSkull, 0, 1, 0);
+		glScaled(0.3, 0.3, 0.3);
+		model_home.Draw();
+		glPopMatrix();
+
+
+
+		glPushMatrix();
+		glTranslatef(cGunX, cGunY, cGunZ);
+		glRotatef(rotateGun - angleX, 0, 1, 0);
+		drawGun();
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(cGunX, cGunY, cGunZ);
+		glRotatef(rotateGun, 0, 1, 0);
+		if (firstPersonShooter)
+			glTranslated(-38, 35, -20);
+		else
+			glTranslated(-38, 35, -15);
+		glScaled(0.125, 0.125, 1);
+		drawHealth();
+		glPopMatrix();
+	}
+
+	else if (level2) {
+		//glEnable(GL_LIGHTING);  // Enable lighting for the level
+		/*GLfloat lightPosition[] = { -140.0f, 0.0f, 250.0f, 1.0f };
+		GLfloat light_direction[] = { -140.0f, 0.0f, 250.0f, 1.0f };
+		GLfloat ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+		GLfloat diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+		GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);*/
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity2);
+
+
+		RenderGround2();
+
+		//RenderWall();
+
+		GLUquadricObj* qobj;
+		qobj = gluNewQuadric();
+		//sky box
+		glPushMatrix();
+		//glTranslated(-140, 0, 250);
+		glTranslatef(cGunX, cGunY, cGunZ);
+		glRotated(90, 1, 0, 1);
+		glRotatef(rotateGun, 0, 1, 0);
+		glBindTexture(GL_TEXTURE_2D, tex);
+		gluQuadricTexture(qobj, true);
+		gluQuadricNormals(qobj, GL_SMOOTH);
+		gluSphere(qobj, 97.5, 1000, 1000);
+		glPopMatrix();
+
+		glPushMatrix();
+		glColor3d(0.3, 0.3, 0.3);
+		glTranslatef(cGunX, cGunY, cGunZ);
+		glRotatef(rotateGun - angleX, 0, 1, 0);
+		drawGun();
+		glPopMatrix();
+
+
 		glPushMatrix();
 		glColor3f(0.0, 0.0, 0.0);
 		glTranslatef(cGunX, cGunY, cGunZ);
 		glRotatef(rotateGun, 0, 1, 0);
 		if (firstPersonShooter)
-			glTranslated(-1, 3.5, 0);
+			glTranslated(1, 3.5, 0);
 		else
-			glTranslated(-1, 3.5, 5);
+			glTranslated(1, 3.5, 5);
 		glRasterPos2i(0, 0);
-
-		std::string powerShot = " PowerShot! ";
-		for (char c : powerShot) {
-			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
+		if (GameScore == 120) {
+			if (!alamy) {
+				SoundEngine->play2D("audio/perfect.mp3", false);
+				alamy = true;
+			}
+			std::string score = "SCORE : " + std::to_string(GameScore) + " PERFECT!";
+			for (char c : score) {
+				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
+			}
+		}
+		else
+		{
+			std::string score = "SCORE : " + std::to_string(GameScore);
+			for (char c : score) {
+				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
+			}
 		}
 		glPopMatrix();
+
+		
+		//glDisable(GL_LIGHTING);  // Disable lighting when not needed
 	}
-
-
-
-	/*glPushMatrix();
-	glTranslatef(4, 1, 0);
-	glRotatef(90, 1, 0, 0);
-	glScalef(1, 1, 1);
-	model_fruit.Draw();
-	glPopMatrix();*/
-
-	glPushMatrix();
-	glColor3d(0.5, 0.5, 0.5);
-	glTranslatef(20, 4.5, -33);
-	glRotatef(rotateSkull, 0, 1, 0);
-	glScaled(0.3, 0.3, 0.3);
-	model_home.Draw();
-	glPopMatrix();
-
-
-
-	glPushMatrix();
-	glTranslatef(cGunX, cGunY, cGunZ);
-	glRotatef(rotateGun-angleX , 0, 1, 0);
-	drawGun();
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(cGunX, cGunY, cGunZ);
-	glRotatef(rotateGun, 0, 1, 0);
-	if (firstPersonShooter)
-		glTranslated(-38, 35, -20);
-	else
-		glTranslated(-38, 35, -15);
-	glScaled(0.125, 0.125, 1);
-	drawHealth();
-	glPopMatrix();
 
 
 	glutSwapBuffers();
@@ -938,445 +1093,582 @@ void myDisplay(void)
 //=======================================================================
 void myKeyboard(unsigned char button, int x, int y)
 {
-	float d = 0.5;
-	switch (button)
-	{
-	case 't':
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		break;
-	case 'r':
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		break;
-	case 'k':
-		if (powerShot) {
-			shootP = true;
-			bulletP = true;
+	if (level1) {
+		float d = 0.5;
+		switch (button)
+		{
+		case 't':
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			break;
+		case 'r':
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			break;
+		case 'k':
+			if (powerShot) {
+				shootP = true;
+				bulletP = true;
+			}
+			break;
+		case 'w':
+			//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
+			if (frontView) {
+				if (!(cWarriorZ - 2 < -40)) {
+					cGunZ -= 0.5;
+					cWarriorZ -= 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunZ += 0.5;
+							cWarriorZ += 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunZ += 0.5;
+							cWarriorZ += 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided) {
+						camera.moveZ(d);
+					}
+					else
+						rockCollided = false;
+				}
+
+				//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
+			}
+			else if (backView) {
+				if (!(cWarriorZ + 2 > 30)) {
+					cGunZ += 0.5;
+					cWarriorZ += 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunZ -= 0.5;
+							cWarriorZ -= 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
+							cGunZ -= 0.5;
+							cWarriorZ -= 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided) {
+						camera.moveZ(d);
+					}
+					else
+						rockCollided = false;
+				}
+			}
+			else if (rightView) {
+				if (!(cWarriorX + 2 > 50)) {
+					cGunX += 0.5;
+					cWarriorX += 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunX -= 0.5;
+							cWarriorX -= 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunX -= 0.5;
+							cWarriorX -= 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided) {
+						camera.moveZ(d);
+					}
+					else
+						rockCollided = false;
+				}
+				//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
+			}
+			else if (leftView) {
+				if (!(cWarriorX - 2 < -34)) {
+					cGunX -= 0.5;
+					cWarriorX -= 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunX += 0.5;
+							cWarriorX += 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunX += 0.5;
+							cWarriorX += 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveZ(d);
+					else
+						rockCollided = false;
+				}
+			}
+			break;
+		case 's':
+			//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
+			if (frontView) {
+				if (!(cWarriorZ + 2 > 30)) {
+					cGunZ += 0.5;
+					cWarriorZ += 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunZ -= 0.5;
+							cWarriorZ -= 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
+							cGunZ -= 0.5;
+							cWarriorZ -= 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveZ(-d);
+					else
+						rockCollided = false;
+				}
+			}
+			else if (backView) {
+				if (!(cWarriorZ - 2 < -40)) {
+					cGunZ -= 0.5;
+					cWarriorZ -= 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunZ += 0.5;
+							cWarriorZ += 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunZ += 0.5;
+							cWarriorZ += 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveZ(-d);
+					else
+						rockCollided = false;
+				}
+			}
+			else if (rightView) {
+				if (!(cWarriorX - 2 < -34)) {
+					cGunX -= 0.5;
+					cWarriorX -= 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunX += 0.5;
+							cWarriorX += 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunX += 0.5;
+							cWarriorX += 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveZ(-d);
+					else
+						rockCollided = false;
+				}
+
+			}
+			else if (leftView) {
+				cGunX += 0.5;
+				cWarriorX += 0.5;
+				if (!(cWarriorX + 2 > 50)) {
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunX -= 0.5;
+							cWarriorX -= 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunX -= 0.5;
+							cWarriorX -= 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveZ(-d);
+					else
+						rockCollided = false;
+				}
+			}
+			break;
+		case 'a':
+			//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
+			if (frontView) {
+				if (!(cWarriorX - 2 < -34)) {
+					cGunX -= 0.5;
+					cWarriorX -= 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunX += 0.5;
+							cWarriorX += 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunX += 0.5;
+							cWarriorX += 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveX(d);
+					else
+						rockCollided = false;
+				}
+			}
+			else if (backView) {
+				if (!(cWarriorX + 2 > 50)) {
+					cGunX += 0.5;
+					cWarriorX += 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunX -= 0.5;
+							cWarriorX -= 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunX -= 0.5;
+							cWarriorX -= 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveX(d);
+					else
+						rockCollided = false;
+				}
+			}
+			else if (rightView) {
+				if (!(cWarriorZ - 2 < -40)) {
+					cGunZ -= 0.5;
+					cWarriorZ -= 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunZ += 0.5;
+							cWarriorZ += 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunZ += 0.5;
+							cWarriorZ += 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveX(d);
+					else
+						rockCollided = false;
+				}
+
+			}
+			else if (leftView) {
+				if (!(cWarriorZ + 2 > 30)) {
+					cGunZ += 0.5;
+					cWarriorZ += 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunZ -= 0.5;
+							cWarriorZ -= 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
+							cGunZ -= 0.5;
+							cWarriorZ -= 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveX(d);
+					else
+						rockCollided = false;
+				}
+			}
+			break;
+		case 'd':
+			//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
+			if (frontView) {
+				if (!(cWarriorX + 2 > 50)) {
+					cGunX += 0.5;
+					cWarriorX += 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunX -= 0.5;
+							cWarriorX -= 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunX -= 0.5;
+							cWarriorX -= 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveX(-d);
+					else
+						rockCollided = false;
+				}
+			}
+			else if (backView) {
+				if (!(cWarriorX - 2 < -34)) {
+					cGunX -= 0.5;
+					cWarriorX -= 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunX += 0.5;
+							cWarriorX += 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunZ -= 0.5;
+							cWarriorZ -= 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveX(-d);
+					else
+						rockCollided = false;
+				}
+			}
+			else if (rightView) {
+				if (!(cWarriorZ + 2 > 30)) {
+					cGunZ += 0.5;
+					cWarriorZ += 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunZ -= 0.5;
+							cWarriorZ -= 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
+							cGunZ -= 0.5;
+							cWarriorZ -= 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveX(-d);
+					else
+						rockCollided = false;
+				}
+			}
+			else if (leftView) {
+				if (!(cWarriorZ - 2 < -40)) {
+					cGunZ -= 0.5;
+					cWarriorZ -= 0.5;
+					for (int i = 0;i < 6;i++) {
+						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
+							cGunZ += 0.5;
+							cWarriorZ += 0.5;
+							rockCollided = true;
+							break;
+						}
+						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
+							cGunZ += 0.5;
+							cWarriorZ += 0.5;
+							break;
+						}*/
+					}
+					if (!rockCollided)
+						camera.moveX(-d);
+					else
+						rockCollided = false;
+				}
+			}
+			break;
+
+		case 'q':
+			camera.moveY(d);
+			break;
+		case 'e':
+			camera.moveY(-d);
+			break;
+		case 'c':
+			if (firstPersonShooter) {
+				camera.moveZ(-5);
+				firstPersonShooter = false;
+				thirdPersonShooter = true;
+				player = true;;
+			}
+			else if (thirdPersonShooter) {
+				camera.moveZ(5);
+				firstPersonShooter = true;
+				thirdPersonShooter = false;
+				player = false;
+			}
+			break;
+			/*case 'n':
+				camera.sideView();
+				break;
+			case 'm':
+				camera.topView();
+				break;*/
+				/*case 'k':
+					printf("Hello");
+					shoot = true;
+					break;*/
+		case 27:
+			exit(0);
+			break;
+		default:
+			break;
 		}
-	break;
-	case 'w':
-		//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
-		if (frontView) {
-			if (!(cWarriorZ - 2 < -40)) {
+	}
+
+	else if (level2) {
+		float d = 0.5;
+		switch (button)
+		{
+		case 'w':
+			//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
+			if (frontView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunZ += 0.5;
-						cWarriorZ += 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunZ += 0.5;
-						cWarriorZ += 0.5;
-						break;
-					}*/
+				camera.moveZ(d);
 				}
-				if (!rockCollided) {
-					camera.moveZ(d);
-				}
-				else
-					rockCollided = false;
+
+				//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
+			else if (backView) {
+				cGunZ += 0.5;
+				cWarriorZ += 0.5;
+				camera.moveZ(d);
+	
 			}
+			else if (rightView) {
+				cGunX += 0.5;
+				cWarriorX += 0.5;
+				camera.moveZ(d);
+				//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
+			}
+			else if (leftView) {
+				cGunX -= 0.5;
+				cWarriorX -= 0.5;
+				camera.moveZ(d);	
+			}
+			break;
+		case 's':
+			//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
+			if (frontView) {
+				cGunZ += 0.5;
+				cWarriorZ += 0.5;
+				camera.moveZ(-d);
 			
-			//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
-		}
-		else if (backView) {
-			if (!(cWarriorZ + 2 > 30)) {
-				cGunZ += 0.5;
-				cWarriorZ += 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunZ -= 0.5;
-						cWarriorZ -= 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
-						cGunZ -= 0.5;
-						cWarriorZ -= 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided) {
-					camera.moveZ(d);
-				}
-				else
-					rockCollided = false;
 			}
-		}
-		else if (rightView) {
-			if (!(cWarriorX + 2 > 50)) {
-				cGunX += 0.5;
-				cWarriorX += 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunX -= 0.5;
-						cWarriorX -= 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunX -= 0.5;
-						cWarriorX -= 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided) {
-					camera.moveZ(d);
-				}
-				else
-					rockCollided = false;
-			}
-			//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
-		}
-		else if (leftView) {
-			if (!(cWarriorX - 2 < -34)) {
-				cGunX -= 0.5;
-				cWarriorX -= 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunX += 0.5;
-						cWarriorX += 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunX += 0.5;
-						cWarriorX += 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveZ(d);
-				else
-					rockCollided = false;
-			}
-		}
-		break;
-	case 's':
-		//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
-		if (frontView) {
-			if (!(cWarriorZ + 2 > 30)) {
-				cGunZ += 0.5;
-				cWarriorZ += 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunZ -= 0.5;
-						cWarriorZ -= 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
-						cGunZ -= 0.5;
-						cWarriorZ -= 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveZ(-d);
-				else
-					rockCollided = false;
-			}
-		}
-		else if (backView) {
-			if (!(cWarriorZ - 2 < -40)) {
+			else if (backView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunZ += 0.5;
-						cWarriorZ += 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunZ += 0.5;
-						cWarriorZ += 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveZ(-d);
-				else
-					rockCollided = false;
-			}
-		}
-		else if (rightView) {
-			if (!(cWarriorX - 2 < -34)) {
-				cGunX -= 0.5;
-				cWarriorX -= 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunX += 0.5;
-						cWarriorX += 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunX += 0.5;
-						cWarriorX += 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveZ(-d);
-				else
-					rockCollided = false;
-			}
+				camera.moveZ(-d);
 
-		}
-		else if (leftView) {
-			cGunX += 0.5;
-			cWarriorX += 0.5;
-			if (!(cWarriorX + 2 > 50)) {
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunX -= 0.5;
-						cWarriorX -= 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunX -= 0.5;
-						cWarriorX -= 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveZ(-d);
-				else
-					rockCollided = false;
 			}
-		}
-		break;
-	case 'a':
-		//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
-		if (frontView) {
-			if (!(cWarriorX - 2 < -34)) {
+			else if (rightView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunX += 0.5;
-						cWarriorX += 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunX += 0.5;
-						cWarriorX += 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveX(d);
-				else
-					rockCollided = false;
+				camera.moveZ(-d);
 			}
-		}
-		else if (backView) {
-			if (!(cWarriorX + 2 > 50)) {
+			else if (leftView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunX -= 0.5;
-						cWarriorX -= 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunX -= 0.5;
-						cWarriorX -= 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveX(d);
-				else
-					rockCollided = false;
+				camera.moveZ(-d);
 			}
-		}
-		else if (rightView) {
-			if (!(cWarriorZ - 2 < -40)) {
-				cGunZ -= 0.5;
-				cWarriorZ -= 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunZ += 0.5;
-						cWarriorZ += 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunZ += 0.5;
-						cWarriorZ += 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveX(d);
-				else
-					rockCollided = false;
-			}
-
-		}
-		else if (leftView) {
-			if (!(cWarriorZ + 2 > 30)) {
-				cGunZ += 0.5;
-				cWarriorZ += 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunZ -= 0.5;
-						cWarriorZ -= 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
-						cGunZ -= 0.5;
-						cWarriorZ -= 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveX(d);
-				else
-					rockCollided = false;
-			}
-		}
-		break;
-	case 'd':
-		//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
-		if (frontView) {
-			if (!(cWarriorX + 2 > 50)) {
-				cGunX += 0.5;
-				cWarriorX += 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunX -= 0.5;
-						cWarriorX -= 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunX -= 0.5;
-						cWarriorX -= 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveX(-d);
-				else
-					rockCollided = false;
-			}
-		}
-		else if (backView) {
-			if (!(cWarriorX - 2 < -34)) {
+			break;
+		case 'a':
+			//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
+			if (frontView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunX += 0.5;
-						cWarriorX += 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunZ -= 0.5;
-						cWarriorZ -= 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveX(-d);
-				else
-					rockCollided = false;
+				camera.moveX(d);
+			
 			}
-		}
-		else if (rightView) {
-			if (!(cWarriorZ + 2 > 30)) {
-				cGunZ += 0.5;
-				cWarriorZ += 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunZ -= 0.5;
-						cWarriorZ -= 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
-						cGunZ -= 0.5;
-						cWarriorZ -= 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveX(-d);
-				else
-					rockCollided = false;
+			else if (backView) {
+				cGunX += 0.5;
+				cWarriorX += 0.5;
+				camera.moveX(d);
 			}
-		}
-		else if (leftView) {
-			if (!(cWarriorZ - 2 < -40)) {
+			else if (rightView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				for (int i = 0;i < 6;i++) {
-					if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
-						cGunZ += 0.5;
-						cWarriorZ += 0.5;
-						rockCollided = true;
-						break;
-					}
-					/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
-						cGunZ += 0.5;
-						cWarriorZ += 0.5;
-						break;
-					}*/
-				}
-				if (!rockCollided)
-					camera.moveX(-d);
-				else
-					rockCollided = false;
+				camera.moveX(d);
 			}
+			else if (leftView) {
+				cGunZ += 0.5;
+				cWarriorZ += 0.5;
+				camera.moveX(d);
+			}
+			break;
+		case 'd':
+			//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
+			if (frontView) {
+				cGunX += 0.5;
+				cWarriorX += 0.5;
+				camera.moveX(-d);
+			}
+			else if (backView) {
+				cGunX -= 0.5;
+				cWarriorX -= 0.5;
+				camera.moveX(-d);		
+			}
+			else if (rightView) {
+				cGunZ += 0.5;
+				cWarriorZ += 0.5;
+				camera.moveX(-d);			
+			}
+			else if (leftView) {
+				cGunZ -= 0.5;
+				cWarriorZ -= 0.5;
+				camera.moveX(-d);
+			}
+			break;
+		case 'c':
+			if (firstPersonShooter) {
+				camera.moveZ(-5);
+				firstPersonShooter = false;
+				thirdPersonShooter = true;
+				player = true;;
+			}
+			else if (thirdPersonShooter) {
+				camera.moveZ(5);
+				firstPersonShooter = true;
+				thirdPersonShooter = false;
+				player = false;
+			}
+			break;
+			/*case 'n':
+				camera.sideView();
+				break;
+			case 'm':
+				camera.topView();
+				break;*/
+				/*case 'k':
+					printf("Hello");
+					shoot = true;
+					break;*/
+		case 27:
+			exit(0);
+			break;
+		default:
+			break;
 		}
-		break;
-
-	case 'q':
-		camera.moveY(d);
-		break;
-	case 'e':
-		camera.moveY(-d);
-		break;
-	case 'c':
-		if (firstPersonShooter) {
-			camera.moveZ(-5);
-			firstPersonShooter = false;
-			thirdPersonShooter = true;
-			player = true;;			
-		}
-		else if (thirdPersonShooter) {
-			camera.moveZ(5);
-			firstPersonShooter = true;
-			thirdPersonShooter = false;
-			player = false;
-		}
-		break;
-	/*case 'n':
-		camera.sideView();
-		break;
-	case 'm':
-		camera.topView();
-		break;*/
-	/*case 'k':
-		printf("Hello");
-		shoot = true;
-		break;*/
-	case 27:
-		exit(0);
-		break;
-	default:
-		break;
 	}
 
 	glutPostRedisplay();
@@ -1413,67 +1705,32 @@ void passM(int x, int y)//passive motion function takes 2 parameters the x and y
 
 void Special(int key, int x, int y) {
 	//float a = 2.0;
-
-	switch (key) {
-	/*case GLUT_KEY_UP:
-		fV = true;
-		rV = false;
-		lV = false;
-		bV = false;
-	if (rightView) {
-			camera.rotateY(90); 
-			rotateGun += 90;
-		}
-		else if (backView) {
-			camera.rotateY(180); 
-			rotateGun += 180;
-		}
-		else if (leftView) {
-			camera.rotateY(-90);
-			rotateGun -= 90;
-		}
-		frontView = true;
-		leftView = false;
-		rightView = false;
-		backView = false;
-		break;*/
-	case GLUT_KEY_DOWN:
-		printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
-		if (frontView) {
-			frontView = false;
-			backView = true;
-		}
-		else if (backView) {
-			frontView = true;
-			backView = false;
-		}
-		else if (rightView) {
-			leftView = true;
-			rightView = false;
-		}
-		else if (leftView) {
-			rightView = true;
-			leftView = false;
-		}
-		//if (backView) {
-		//	camera.rotateY(-90); // rotate to your right
-		//	rotateGun -= 90;
-		//}
-		//else if (frontView) {
-		//	camera.rotateY(180);
-		//	rotateGun += 180;
-		//}
-		//else if (leftView) {
-		//	camera.rotateY(90); // rotate to your left
-		//	rotateGun += 90;
-		//}
-		//frontView = false;
-		//leftView = false;
-		//rightView = false;
-		//backView = true;
-		camera.rotateY(180);
-		rotateGun += 180;
-		if (cWarriorZ > 30 || cWarriorZ < -40 || cWarriorX > 50 || cWarriorX < -34) {
+	if (level1) {
+		switch (key) {
+			/*case GLUT_KEY_UP:
+				fV = true;
+				rV = false;
+				lV = false;
+				bV = false;
+			if (rightView) {
+					camera.rotateY(90);
+					rotateGun += 90;
+				}
+				else if (backView) {
+					camera.rotateY(180);
+					rotateGun += 180;
+				}
+				else if (leftView) {
+					camera.rotateY(-90);
+					rotateGun -= 90;
+				}
+				frontView = true;
+				leftView = false;
+				rightView = false;
+				backView = false;
+				break;*/
+		case GLUT_KEY_DOWN:
+			printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
 			if (frontView) {
 				frontView = false;
 				backView = true;
@@ -1490,80 +1747,51 @@ void Special(int key, int x, int y) {
 				rightView = true;
 				leftView = false;
 			}
+			//if (backView) {
+			//	camera.rotateY(-90); // rotate to your right
+			//	rotateGun -= 90;
+			//}
+			//else if (frontView) {
+			//	camera.rotateY(180);
+			//	rotateGun += 180;
+			//}
+			//else if (leftView) {
+			//	camera.rotateY(90); // rotate to your left
+			//	rotateGun += 90;
+			//}
+			//frontView = false;
+			//leftView = false;
+			//rightView = false;
+			//backView = true;
 			camera.rotateY(180);
 			rotateGun += 180;
-		}
-		/*cosThet = cos((rotateGun) * PI / 180.0);
-		sinThet = sin((rotateGun) * PI / 180.0);
-		cWarriorX = cWarriorX * cosThet + cWarriorZ * sinThet;
-		cWarriorX = -cWarriorX * sinThet + cWarriorZ * cosThet;*/
-		break;
-	case GLUT_KEY_LEFT:
-		printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
-		if (frontView) {
-			frontView = false;
-			leftView = true;
-		}
-		else if (backView) {
-			backView = false;
-			rightView = true;
-		}
-		else if (rightView) {
-			frontView = true;
-			rightView = false;
-		}
-		else if (leftView) {
-			backView = true;
-			leftView = false;
-		}
-		camera.rotateY(90); // rotate to your left
-		rotateGun += 90;
-		if (cWarriorZ > 30 || cWarriorZ < -40 || cWarriorX > 50 || cWarriorX < -34) {
-			if (frontView) {
-				frontView = false;
-				rightView = true;
+			if (cWarriorZ > 30 || cWarriorZ < -40 || cWarriorX > 50 || cWarriorX < -34) {
+				if (frontView) {
+					frontView = false;
+					backView = true;
+				}
+				else if (backView) {
+					frontView = true;
+					backView = false;
+				}
+				else if (rightView) {
+					leftView = true;
+					rightView = false;
+				}
+				else if (leftView) {
+					rightView = true;
+					leftView = false;
+				}
+				camera.rotateY(180);
+				rotateGun += 180;
 			}
-			else if (backView) {
-				leftView = true;
-				backView = false;
-			}
-			else if (rightView) {
-				backView = true;
-				rightView = false;
-			}
-			else if (leftView) {
-				frontView = true;
-				leftView = false;
-			}
-			camera.rotateY(-90); // rotate to your right
-			rotateGun -= 90;
-		}
-		/*cosThet = cos((rotateGun) * PI / 180.0);
-		sinThet = sin((rotateGun) * PI / 180.0);
-		cWarriorX = cWarriorX * cosThet + cWarriorZ * sinThet;
-		cWarriorX = -cWarriorX * sinThet + cWarriorZ * cosThet;*/
-		break;
-	case GLUT_KEY_RIGHT:
-		printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
-		if (frontView) {
-			frontView = false;
-			rightView = true;
-		}
-		else if (backView) {
-			leftView = true;
-			backView = false;
-		}
-		else if (rightView) {
-			backView = true;
-			rightView = false;
-		}
-		else if (leftView) {
-			frontView = true;
-			leftView = false;
-		}
-		camera.rotateY(-90); // rotate to your right
-		rotateGun -= 90;
-		if (cWarriorZ > 30 || cWarriorZ < -40 || cWarriorX > 50 || cWarriorX < -34) {
+			/*cosThet = cos((rotateGun) * PI / 180.0);
+			sinThet = sin((rotateGun) * PI / 180.0);
+			cWarriorX = cWarriorX * cosThet + cWarriorZ * sinThet;
+			cWarriorX = -cWarriorX * sinThet + cWarriorZ * cosThet;*/
+			break;
+		case GLUT_KEY_LEFT:
+			printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
 			if (frontView) {
 				frontView = false;
 				leftView = true;
@@ -1582,12 +1810,146 @@ void Special(int key, int x, int y) {
 			}
 			camera.rotateY(90); // rotate to your left
 			rotateGun += 90;
+			if (cWarriorZ > 30 || cWarriorZ < -40 || cWarriorX > 50 || cWarriorX < -34) {
+				if (frontView) {
+					frontView = false;
+					rightView = true;
+				}
+				else if (backView) {
+					leftView = true;
+					backView = false;
+				}
+				else if (rightView) {
+					backView = true;
+					rightView = false;
+				}
+				else if (leftView) {
+					frontView = true;
+					leftView = false;
+				}
+				camera.rotateY(-90); // rotate to your right
+				rotateGun -= 90;
+			}
+			/*cosThet = cos((rotateGun) * PI / 180.0);
+			sinThet = sin((rotateGun) * PI / 180.0);
+			cWarriorX = cWarriorX * cosThet + cWarriorZ * sinThet;
+			cWarriorX = -cWarriorX * sinThet + cWarriorZ * cosThet;*/
+			break;
+		case GLUT_KEY_RIGHT:
+			printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
+			if (frontView) {
+				frontView = false;
+				rightView = true;
+			}
+			else if (backView) {
+				leftView = true;
+				backView = false;
+			}
+			else if (rightView) {
+				backView = true;
+				rightView = false;
+			}
+			else if (leftView) {
+				frontView = true;
+				leftView = false;
+			}
+			camera.rotateY(-90); // rotate to your right
+			rotateGun -= 90;
+			if (cWarriorZ > 30 || cWarriorZ < -40 || cWarriorX > 50 || cWarriorX < -34) {
+				if (frontView) {
+					frontView = false;
+					leftView = true;
+				}
+				else if (backView) {
+					backView = false;
+					rightView = true;
+				}
+				else if (rightView) {
+					frontView = true;
+					rightView = false;
+				}
+				else if (leftView) {
+					backView = true;
+					leftView = false;
+				}
+				camera.rotateY(90); // rotate to your left
+				rotateGun += 90;
+			}
+			/*cosThet = cos((rotateGun) * PI / 180.0);
+			sinThet = sin((rotateGun) * PI / 180.0);
+			cWarriorX = cWarriorX * cosThet + cWarriorZ * sinThet;
+			cWarriorX = -cWarriorX * sinThet + cWarriorZ * cosThet;*/
+			break;
 		}
-	    /*cosThet = cos((rotateGun) * PI / 180.0);
-		sinThet = sin((rotateGun) * PI / 180.0);
-		cWarriorX = cWarriorX * cosThet + cWarriorZ * sinThet;
-		cWarriorX = -cWarriorX * sinThet + cWarriorZ * cosThet;*/
-		break;
+	}
+	else if (level2) {
+		switch (key) {
+	
+		case GLUT_KEY_DOWN:
+			printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
+			if (frontView) {
+				frontView = false;
+				backView = true;
+			}
+			else if (backView) {
+				frontView = true;
+				backView = false;
+			}
+			else if (rightView) {
+				leftView = true;
+				rightView = false;
+			}
+			else if (leftView) {
+				rightView = true;
+				leftView = false;
+			}
+
+			camera.rotateY(180);
+			rotateGun += 180;
+			break;
+		case GLUT_KEY_LEFT:
+			printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
+			if (frontView) {
+				frontView = false;
+				leftView = true;
+			}
+			else if (backView) {
+				backView = false;
+				rightView = true;
+			}
+			else if (rightView) {
+				frontView = true;
+				rightView = false;
+			}
+			else if (leftView) {
+				backView = true;
+				leftView = false;
+			}
+			camera.rotateY(90); // rotate to your left
+			rotateGun += 90;
+			break;
+		case GLUT_KEY_RIGHT:
+			printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
+			if (frontView) {
+				frontView = false;
+				rightView = true;
+			}
+			else if (backView) {
+				leftView = true;
+				backView = false;
+			}
+			else if (rightView) {
+				backView = true;
+				rightView = false;
+			}
+			else if (leftView) {
+				frontView = true;
+				leftView = false;
+			}
+			camera.rotateY(-90); // rotate to your right
+			rotateGun -= 90;
+			break;
+		}
 	}
 
 	glutPostRedisplay();
@@ -1695,398 +2057,446 @@ void LoadAssets()
 
 
 void shootTimer(int val) {
-
-	if (shoot && shootTime > 0) {
-		if (!shootSound) {
-			SoundEngine->play2D("audio/gunShot.mp3", false);
-			shootSound = true;
-		}
-		cbulletx = 0.0;
-		cbullety = 0.0;
-		cbulletz = 0.0;
-		bulletZ -= 1;
-		shootTime -= 1;
-		//cbulletz -= 1;
-		if (shootTime == 49)
-			shot = true;
-
-		float cosTheta = cos((rotateGun-angleX) * PI / 180.0);
-		float sinTheta = sin((rotateGun-angleX) * PI / 180.0);
-
-		cbulletx = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */((bulletZ-1) * sinTheta) + cGunX;
-		cbullety = cbullety + 0.5 + cGunY;
-		cbulletz = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ ((bulletZ-1) * cosTheta) + cGunZ;
-		//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
-		for (int i = 0;i < 6;i++) {
-			if (cbulletx >= cRockX[i] - 3 && cbulletx <= cRockX[i] + 3 && cbulletz >= cRockZ[i] - 3 && cbulletz <= cRockZ[i] + 3) {
-				bulletCollidesRock = true;
-				bullet = false;
-			}
-		}
-		if (!bulletCollidesRock) {
-			for (int i = 0;i < 6;i++) {
-				if (cbulletx > cZombieX[i] - 0.8 && cbulletx < cZombieX[i] + 1 && cbullety>0 && cbullety < 8 && cbulletz >= cZombieZ[i] - 2 && cbulletz <= cZombieZ[i] + 2 && !oneZombiePerShot) {
-					if (!zombiefirstShot[i]) {
-						collide[i] = true;
-						zombiefirstShot[i] = true;
-						oneZombiePerShot = true;
-						bullet = false;
-					}
-					else if (zombiefirstShot[i] && !zombieDied[i] && !collide[i] && !oneZombiePerShot) {
-						collide[i] = true;
-						zombieDied[i] = true;
-						oneZombiePerShot = true;
-						bullet = false;
-						GameScore += 20;
-						if (!powerShot) {
-							counterForPowerShot++;
-							if (counterForPowerShot == 2) {
-								powerShot = true;
-								counterForPowerShot = 0;
-							}
-						}
-					}
-				}
-				else
-					collide[i] = false;
-			}
-		}
-	}
-	else {
-		shootSound = false;
-		shoot = false;
-		shootTime = 50;
-		bulletZ = 0;
-		cbulletz = cGunZ;
-		oneZombiePerShot = false;
-		bullet = true;
-		bulletCollidesRock = false;
-	}
-
-	if (powerShot) {
-		if (shootP && shootTimeP > 0) {
-			/*if (!shootSound) {
+	if (level1) {
+		if (shoot && shootTime > 0) {
+			if (!shootSound) {
 				SoundEngine->play2D("audio/gunShot.mp3", false);
 				shootSound = true;
-			}*/
-			cbulletxP = 0.0;
-			cbulletyP = 0.0;
-			cbulletzP = 0.0;
-			bulletZP -= 2;
-			shootTimeP -= 1;
+			}
+			cbulletx = 0.0;
+			cbullety = 0.0;
+			cbulletz = 0.0;
+			bulletZ -= 1;
+			shootTime -= 1;
 			//cbulletz -= 1;
-			if (shootTimeP == 99)
-				shotP = true;
+			if (shootTime == 49)
+				shot = true;
 
 			float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
 			float sinTheta = sin((rotateGun - angleX) * PI / 180.0);
 
-			cbulletxP = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(-2 * cosTheta) + ((bulletZP + 1) * sinTheta) + cGunX;
-			cbulletyP = cbulletyP + 0.5 + cGunY;
-			cbulletzP = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZ;
+			cbulletx = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */((bulletZ - 1) * sinTheta) + cGunX;
+			cbullety = cbullety + 0.5 + cGunY;
+			cbulletz = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ ((bulletZ - 1) * cosTheta) + cGunZ;
 			//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
 			for (int i = 0;i < 6;i++) {
-				if (cbulletxP >= cRockX[i] - 3 && cbulletxP <= cRockX[i] + 3 && cbulletzP >= cRockZ[i] - 3 && cbulletzP <= cRockZ[i] + 3) {
-					bulletCollidesRockP = true;
-					bulletP = false;
+				if (cbulletx >= cRockX[i] - 3 && cbulletx <= cRockX[i] + 3 && cbulletz >= cRockZ[i] - 3 && cbulletz <= cRockZ[i] + 3) {
+					bulletCollidesRock = true;
+					bullet = false;
 				}
 			}
-			if (!bulletCollidesRockP) {
+			if (!bulletCollidesRock) {
 				for (int i = 0;i < 6;i++) {
-					if (cbulletxP > cZombieX[i] - 0.8 && cbulletxP < cZombieX[i] + 1 && cbulletyP>0 && cbulletyP < 8 && cbulletzP >= cZombieZ[i] - 2 && cbulletzP <= cZombieZ[i] + 2) {
-						if (!zombieDied[i] && !collideP[i] && !oneZombiePerShotP) {
-							collideP[i] = true;
+					if (cbulletx > cZombieX[i] - 0.8 && cbulletx < cZombieX[i] + 1 && cbullety>0 && cbullety < 8 && cbulletz >= cZombieZ[i] - 2 && cbulletz <= cZombieZ[i] + 2 && !oneZombiePerShot) {
+						if (!zombiefirstShot[i]) {
+							collide[i] = true;
+							zombiefirstShot[i] = true;
+							oneZombiePerShot = true;
+							bullet = false;
+						}
+						else if (zombiefirstShot[i] && !zombieDied[i] && !collide[i] && !oneZombiePerShot) {
+							collide[i] = true;
 							zombieDied[i] = true;
-							oneZombiePerShotP = true;
-							bulletP = false;
+							oneZombiePerShot = true;
+							bullet = false;
 							GameScore += 20;
-							counterForPowerShot++;
-							if (counterForPowerShot == 2) {
-								powerShot = true;
-								counterForPowerShot = 0;
+							if (!powerShot) {
+								counterForPowerShot++;
+								if (counterForPowerShot == 2) {
+									powerShot = true;
+									counterForPowerShot = 0;
+								}
 							}
 						}
 					}
 					else
-						collideP[i] = false;
+						collide[i] = false;
 				}
 			}
-			if (shootTimeP == 50)
-				powerShot = false;
 		}
 		else {
-			//shootSound = false;
-			shootP = false;
-			shootTimeP = 100;
-			bulletZP = 0;
-			cbulletzP = cWarriorZ;
-			oneZombiePerShotP = false;
-			bulletP = false;
-			bulletCollidesRockP = false;
+			shootSound = false;
+			shoot = false;
+			shootTime = 50;
+			bulletZ = 0;
+			cbulletz = cGunZ;
+			oneZombiePerShot = false;
+			bullet = true;
+			bulletCollidesRock = false;
 		}
+
+		if (powerShot) {
+			if (shootP && shootTimeP > 0) {
+				/*if (!shootSound) {
+					SoundEngine->play2D("audio/gunShot.mp3", false);
+					shootSound = true;
+				}*/
+				cbulletxP = 0.0;
+				cbulletyP = 0.0;
+				cbulletzP = 0.0;
+				bulletZP -= 2;
+				shootTimeP -= 1;
+				//cbulletz -= 1;
+				if (shootTimeP == 99)
+					shotP = true;
+
+				float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
+				float sinTheta = sin((rotateGun - angleX) * PI / 180.0);
+
+				cbulletxP = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(-2 * cosTheta) + ((bulletZP + 1) * sinTheta) + cGunX;
+				cbulletyP = cbulletyP + 0.5 + cGunY;
+				cbulletzP = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZ;
+				//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
+				for (int i = 0;i < 6;i++) {
+					if (cbulletxP >= cRockX[i] - 3 && cbulletxP <= cRockX[i] + 3 && cbulletzP >= cRockZ[i] - 3 && cbulletzP <= cRockZ[i] + 3) {
+						bulletCollidesRockP = true;
+						bulletP = false;
+					}
+				}
+				if (!bulletCollidesRockP) {
+					for (int i = 0;i < 6;i++) {
+						if (cbulletxP > cZombieX[i] - 0.8 && cbulletxP < cZombieX[i] + 1 && cbulletyP>0 && cbulletyP < 8 && cbulletzP >= cZombieZ[i] - 2 && cbulletzP <= cZombieZ[i] + 2) {
+							if (!zombieDied[i] && !collideP[i] && !oneZombiePerShotP) {
+								collideP[i] = true;
+								zombieDied[i] = true;
+								oneZombiePerShotP = true;
+								bulletP = false;
+								GameScore += 20;
+								counterForPowerShot++;
+								if (counterForPowerShot == 2) {
+									powerShot = true;
+									counterForPowerShot = 0;
+								}
+							}
+						}
+						else
+							collideP[i] = false;
+					}
+				}
+				if (shootTimeP == 50)
+					powerShot = false;
+			}
+			else {
+				//shootSound = false;
+				shootP = false;
+				shootTimeP = 100;
+				bulletZP = 0;
+				cbulletzP = cWarriorZ;
+				oneZombiePerShotP = false;
+				bulletP = false;
+				bulletCollidesRockP = false;
+			}
+		}
+		//glTranslatef(10, 4, 0);
+
+
+		/*if (firstPersonShooter) {
+			if (frontView) {
+				ex = cGunX - 1;
+				ey = cGunY + 0.5;
+				ez = cGunZ + 2;
+			}
+			else if (backView) {
+				ex = cGunX + 1;
+				ey = cGunY + 0.5;
+				ez = cGunZ - 2;
+			}
+			else if (rightView) {
+				ex = cGunX - 2;
+				ey = cGunY + 0.5;
+				ez = cGunZ - 1;
+			}
+			else if (leftView) {
+				ex = cGunX + 2;
+				ey = cGunY + 0.5;
+				ez = cGunZ + 1;
+			}
+		}
+
+		else if (thirdPersonShooter) {
+			if (frontView) {
+				ex = cGunX - 1;
+				ey = cGunY + 0.5;
+				ez = cGunZ + 4;
+			}
+			else if (backView) {
+				ex = cGunX + 1;
+				ey = cGunY + 0.5;
+				ez = cGunZ - 4;
+			}
+			else if (rightView) {
+				ex = cGunX - 4;
+				ey = cGunY + 0.5;
+				ez = cGunZ - 1;
+			}
+			else if (leftView) {
+				ex = cGunX + 4;
+				ey = cGunY + 0.5;
+				ez = cGunZ + 1;
+			}
+		}*/
+		//20, 4.5, -33
+		if (cWarriorX >= 19 && cWarriorX <= 21 && cWarriorZ >= -34 && cWarriorZ <= -32) {
+			level1 = false;
+			level2 = true;
+
+
+
+			if (backView) {
+				frontView = true;
+				backView = false;
+				camera.rotateY(180);
+				rotateGun += 180;
+			}
+			else if (rightView) {
+				frontView = true;
+				rightView = false;
+				camera.rotateY(90); // rotate to your left
+				rotateGun += 90;
+			}
+			else if (leftView) {
+				frontView = true;
+				leftView = false;
+				camera.rotateY(-90); // rotate to your right
+				rotateGun -= 90;
+			}
+
+			cGunX -= 160;
+			cWarriorX -= 160;
+			camera.moveX(160);
+
+			cGunZ += 283;
+			cWarriorZ += 283;
+			camera.moveZ(-283);
+
+			/*lightIntensity[0] = 0.7f;
+			lightIntensity[1] = 0.7f;
+			lightIntensity[2] = 0.7f;*/
+				/*for (int i = 0; i < 3; ++i) {
+					lightIntensity[i] = 0.7;  
+				}*/
+			//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+
+
+
+		}
+		glutPostRedisplay();
+		glutTimerFunc(1, shootTimer, 0);
 	}
-	//glTranslatef(10, 4, 0);
-	
-
-	/*if (firstPersonShooter) {
-		if (frontView) {
-			ex = cGunX - 1;
-			ey = cGunY + 0.5;
-			ez = cGunZ + 2;
-		}
-		else if (backView) {
-			ex = cGunX + 1;
-			ey = cGunY + 0.5;
-			ez = cGunZ - 2;
-		}
-		else if (rightView) {
-			ex = cGunX - 2;
-			ey = cGunY + 0.5;
-			ez = cGunZ - 1;
-		}
-		else if (leftView) {
-			ex = cGunX + 2;
-			ey = cGunY + 0.5;
-			ez = cGunZ + 1;
-		}
-	}
-
-	else if (thirdPersonShooter) {
-		if (frontView) {
-			ex = cGunX - 1;
-			ey = cGunY + 0.5;
-			ez = cGunZ + 4;
-		}
-		else if (backView) {
-			ex = cGunX + 1;
-			ey = cGunY + 0.5;
-			ez = cGunZ - 4;
-		}
-		else if (rightView) {
-			ex = cGunX - 4;
-			ey = cGunY + 0.5;
-			ez = cGunZ - 1;
-		}
-		else if (leftView) {
-			ex = cGunX + 4;
-			ey = cGunY + 0.5;
-			ez = cGunZ + 1;
-		}
-	}*/
-
-
-	glutPostRedisplay();
-	glutTimerFunc(1, shootTimer, 0);
 }
 
 void shootRotation(int val) {
-	rotateSkull += 10;
-	rotatefireBall += 10;
+	if (level1) {
+		rotateSkull += 10;
+		rotatefireBall += 10;
 
-	if (shot) {
-		shotAngle = 45;
-		shot = false;
+		if (shot) {
+			shotAngle = 45;
+			shot = false;
+		}
+		else if (shotP) {
+			shotP = false;
+		}
+		else
+			shotAngle = 0;
+		glutPostRedisplay();
+		glutTimerFunc(60, shootRotation, 0);
 	}
-	else if (shotP) {
-		shotP = false;
-	}
-	else
-		shotAngle = 0;
-	glutPostRedisplay();
-	glutTimerFunc(60, shootRotation, 0);
 }
 
 void zombieGetCloser(int val) {
-	for (int i = 0;i < 6;i++) {
-		if (cZombieX[i] > cWarriorX - 0.5 && cZombieX[i]< cWarriorX + 0.5 && cZombieZ[i]>cWarriorZ - 0.5 && cZombieZ[i] < cWarriorZ + 0.5) {
-			if (!zombieDied[i]) {
-				damageSoundOnlyOnce[i] = true;
-				if (timerPunch[i] > 0) {
-					zombiePunchRotateAngle[i] = 45;
-					timerPunch[i]--;
-					warriorColor[i] = 1.0;
-				}
-				else {
-					warriorColor[i] = 0.0;
-					zombiePunchRotateAngle[i] = 0.0;
-					timerPunch[i] = 2;
-				}
-			}
-		}
-		else {
-			damageSoundOnlyOnce[i] = false;
-			warriorColor[i] = 0.0;
-			zombiePunchRotateAngle[i] = 0.0;
-			timerPunch[i] = 2;
-			if (timerFromDecX[i]) {
-				int r = whichRock[i];
-				if (cZombieZ[i] <= cRockZ[r] + 3) {
-					cZombieZ[i] += 0.2;
-				}
-				else if (cZombieX[i] >= cRockX[r] - 3) {
-					cZombieX[i] -= 0.2;
-				}
-				else {
-					timerFromDecX[i] = false;
-				}
-			}
-			else if (timerFromIncX[i]) {
-				int r = whichRock[i];
-				if (cZombieZ[i] <= cRockZ[r] + 3) {
-					cZombieZ[i] += 0.2;
-				}
-				else if (cZombieX[i] <= cRockX[r] + 3) {
-					cZombieX[i] += 0.2;
-				}
-				else {
-					timerFromIncX[i] = false;
-				}
-			}
-			else if (timerFromDecZ[i]) {
-				int r = whichRock[i];
-				if (cZombieX[i] <= cRockX[r] + 3) {
-					cZombieX[i] += 0.2;
-				}
-				else if (cZombieZ[i] >= cRockZ[r] - 3) {
-					cZombieZ[i] -= 0.2;
-				}
-				else {
-					timerFromDecZ[i] = false;
-				}
-			}
-			else if (timerFromIncZ[i]) {
-				int r = whichRock[i];
-				if (cZombieX[i] <= cRockX[r] + 3) {
-					cZombieX[i] += 0.2;
-				}
-				else if (cZombieZ[i] <= cRockZ[r] + 3) {
-					cZombieZ[i] += 0.2;
-				}
-				else {
-					timerFromIncZ[i] = false;
+	if (level1) {
+		for (int i = 0;i < 6;i++) {
+			if (cZombieX[i] > cWarriorX - 0.5 && cZombieX[i]< cWarriorX + 0.5 && cZombieZ[i]>cWarriorZ - 0.5 && cZombieZ[i] < cWarriorZ + 0.5) {
+				if (!zombieDied[i]) {
+					damageSoundOnlyOnce[i] = true;
+					if (timerPunch[i] > 0) {
+						zombiePunchRotateAngle[i] = 45;
+						timerPunch[i]--;
+						warriorColor[i] = 1.0;
+					}
+					else {
+						warriorColor[i] = 0.0;
+						zombiePunchRotateAngle[i] = 0.0;
+						timerPunch[i] = 2;
+					}
 				}
 			}
 			else {
-				if (!zombieDied[i]) {
-					if (cZombieX[i] > cWarriorX && !(fabs(cZombieX[i] - cWarriorX) <= 0.2)) {
-						for (int j = i + 1;j < 7;j++) {
-							if (j < 6) {
-								if (!zombieDied[j]) {
-									if (!((fabs(cZombieX[i] - 0.2 - cZombieX[j]) <= 0.5) && (fabs(cZombieZ[i] - cZombieZ[j]) <= 0.5))) {
-										cZombieX[i] -= 0.2;
-										for (int k = 0;k < 6;k++) {
-											if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
-												cZombieX[i] += 0.2;
-												timerFromDecX[i] = true;
-												whichRock[i] = k;
-												break;
-											}
+				damageSoundOnlyOnce[i] = false;
+				warriorColor[i] = 0.0;
+				zombiePunchRotateAngle[i] = 0.0;
+				timerPunch[i] = 2;
+				if (timerFromDecX[i]) {
+					int r = whichRock[i];
+					if (cZombieZ[i] <= cRockZ[r] + 3) {
+						cZombieZ[i] += 0.2;
+					}
+					else if (cZombieX[i] >= cRockX[r] - 3) {
+						cZombieX[i] -= 0.2;
+					}
+					else {
+						timerFromDecX[i] = false;
+					}
+				}
+				else if (timerFromIncX[i]) {
+					int r = whichRock[i];
+					if (cZombieZ[i] <= cRockZ[r] + 3) {
+						cZombieZ[i] += 0.2;
+					}
+					else if (cZombieX[i] <= cRockX[r] + 3) {
+						cZombieX[i] += 0.2;
+					}
+					else {
+						timerFromIncX[i] = false;
+					}
+				}
+				else if (timerFromDecZ[i]) {
+					int r = whichRock[i];
+					if (cZombieX[i] <= cRockX[r] + 3) {
+						cZombieX[i] += 0.2;
+					}
+					else if (cZombieZ[i] >= cRockZ[r] - 3) {
+						cZombieZ[i] -= 0.2;
+					}
+					else {
+						timerFromDecZ[i] = false;
+					}
+				}
+				else if (timerFromIncZ[i]) {
+					int r = whichRock[i];
+					if (cZombieX[i] <= cRockX[r] + 3) {
+						cZombieX[i] += 0.2;
+					}
+					else if (cZombieZ[i] <= cRockZ[r] + 3) {
+						cZombieZ[i] += 0.2;
+					}
+					else {
+						timerFromIncZ[i] = false;
+					}
+				}
+				else {
+					if (!zombieDied[i]) {
+						if (cZombieX[i] > cWarriorX && !(fabs(cZombieX[i] - cWarriorX) <= 0.2)) {
+							for (int j = i + 1;j < 7;j++) {
+								if (j < 6) {
+									if (!zombieDied[j]) {
+										if (!((fabs(cZombieX[i] - 0.2 - cZombieX[j]) <= 0.5) && (fabs(cZombieZ[i] - cZombieZ[j]) <= 0.5))) {
+											cZombieX[i] -= 0.2;
+											for (int k = 0;k < 6;k++) {
+												if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
+													cZombieX[i] += 0.2;
+													timerFromDecX[i] = true;
+													whichRock[i] = k;
+													break;
+												}
 
+											}
 										}
 									}
 								}
-							}
-							else {
-								cZombieX[i] -= 0.2;
-								for (int k = 0;k < 6;k++) {
-									if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
-										cZombieX[i] += 0.2;
-										timerFromDecX[i] = true;
-										whichRock[i] = k;
-										break;
-									}
+								else {
+									cZombieX[i] -= 0.2;
+									for (int k = 0;k < 6;k++) {
+										if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
+											cZombieX[i] += 0.2;
+											timerFromDecX[i] = true;
+											whichRock[i] = k;
+											break;
+										}
 
+									}
+								}
+							}
+
+						}
+						else if (cZombieX[i] <= cWarriorX && !(fabs(cZombieX[i] - cWarriorX) <= 0.2)) {
+							for (int j = i + 1;j < 7;j++) {
+								if (j < 6) {
+									if (!zombieDied[j]) {
+										if (!((fabs(cZombieX[i] + 0.2 - cZombieX[j]) <= 0.5) && (fabs(cZombieZ[i] - cZombieZ[j]) <= 0.5))) {
+											cZombieX[i] += 0.2;
+											for (int k = 0;k < 6;k++) {
+												if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
+													cZombieX[i] -= 0.2;
+													timerFromIncX[i] = true;
+													whichRock[i] = k;
+													break;
+												}
+
+											}
+										}
+									}
+								}
+								else {
+									cZombieX[i] += 0.2;
+									for (int k = 0;k < 6;k++) {
+										if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
+											cZombieX[i] -= 0.2;
+											timerFromIncX[i] = true;
+											whichRock[i] = k;
+										}
+
+									}
 								}
 							}
 						}
-
-					}
-					else if (cZombieX[i] <= cWarriorX && !(fabs(cZombieX[i] - cWarriorX) <= 0.2)) {
-						for (int j = i + 1;j < 7;j++) {
-							if (j < 6) {
-								if (!zombieDied[j]) {
-									if (!((fabs(cZombieX[i] + 0.2 - cZombieX[j]) <= 0.5) && (fabs(cZombieZ[i] - cZombieZ[j]) <= 0.5))) {
-										cZombieX[i] += 0.2;
-										for (int k = 0;k < 6;k++) {
-											if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
-												cZombieX[i] -= 0.2;
-												timerFromIncX[i] = true;
-												whichRock[i] = k;
-												break;
-											}
-
-										}
-									}
-								}
-							}
-							else {
-								cZombieX[i] += 0.2;
-								for (int k = 0;k < 6;k++) {
-									if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
-										cZombieX[i] -= 0.2;
-										timerFromIncX[i] = true;
-										whichRock[i] = k;
-									}
-
-								}
-							}
-						}
-					}
-					if (cZombieZ[i] > cWarriorZ && !(fabs(cZombieZ[i] - cWarriorZ) <= 0.2)) {
-						for (int j = i + 1;j < 7;j++) {
-							if (j < 6) {
-								if (!zombieDied[j]) {
-									if (!((fabs(cZombieZ[i] - 0.2 - cZombieZ[j]) <= 0.5) && (fabs(cZombieX[i] - cZombieX[j]) <= 0.5))) {
-										cZombieZ[i] -= 0.2;
-										for (int k = 0;k < 6;k++) {
-											if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
-												cZombieZ[i] += 0.2;
-												timerFromDecZ[i] = true;
-												whichRock[i] = k;
-												break;
+						if (cZombieZ[i] > cWarriorZ && !(fabs(cZombieZ[i] - cWarriorZ) <= 0.2)) {
+							for (int j = i + 1;j < 7;j++) {
+								if (j < 6) {
+									if (!zombieDied[j]) {
+										if (!((fabs(cZombieZ[i] - 0.2 - cZombieZ[j]) <= 0.5) && (fabs(cZombieX[i] - cZombieX[j]) <= 0.5))) {
+											cZombieZ[i] -= 0.2;
+											for (int k = 0;k < 6;k++) {
+												if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
+													cZombieZ[i] += 0.2;
+													timerFromDecZ[i] = true;
+													whichRock[i] = k;
+													break;
+												}
 											}
 										}
 									}
 								}
-							}
-							else {
-								cZombieZ[i] -= 0.2;
-								for (int k = 0;k < 6;k++) {
-									if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
-										cZombieZ[i] += 0.2;
-										timerFromDecZ[i] = true;
-										whichRock[i] = k;
-										break;
+								else {
+									cZombieZ[i] -= 0.2;
+									for (int k = 0;k < 6;k++) {
+										if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
+											cZombieZ[i] += 0.2;
+											timerFromDecZ[i] = true;
+											whichRock[i] = k;
+											break;
+										}
 									}
 								}
 							}
 						}
-					}
-					else if (cZombieZ[i] <= cWarriorZ && !(fabs(cZombieZ[i] - cWarriorZ) <= 0.2)) {
-						for (int j = i + 1;j < 7;j++) {
-							if (j < 6) {
-								if (!zombieDied[j]) {
-									if (!((fabs(cZombieZ[i] + 0.2 - cZombieZ[j]) <= 0.5) && (fabs(cZombieX[i] - cZombieX[j]) <= 0.5))) {
-										cZombieZ[i] += 0.2;
-										for (int k = 0;k < 6;k++) {
-											if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
-												cZombieZ[i] -= 0.2;
-												timerFromIncZ[i] = true;
-												whichRock[i] = k;
-												break;
+						else if (cZombieZ[i] <= cWarriorZ && !(fabs(cZombieZ[i] - cWarriorZ) <= 0.2)) {
+							for (int j = i + 1;j < 7;j++) {
+								if (j < 6) {
+									if (!zombieDied[j]) {
+										if (!((fabs(cZombieZ[i] + 0.2 - cZombieZ[j]) <= 0.5) && (fabs(cZombieX[i] - cZombieX[j]) <= 0.5))) {
+											cZombieZ[i] += 0.2;
+											for (int k = 0;k < 6;k++) {
+												if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
+													cZombieZ[i] -= 0.2;
+													timerFromIncZ[i] = true;
+													whichRock[i] = k;
+													break;
+												}
 											}
 										}
 									}
 								}
-							}
-							else {
-								cZombieZ[i] += 0.2;
-								for (int k = 0;k < 6;k++) {
-									if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
-										cZombieZ[i] -= 0.2;
-										timerFromIncZ[i] = true;
-										whichRock[i] = k;
-										break;
+								else {
+									cZombieZ[i] += 0.2;
+									for (int k = 0;k < 6;k++) {
+										if (cZombieX[i] >= cRockX[k] - 3 && cZombieX[i] <= cRockX[k] + 3 && cZombieZ[i] >= cRockZ[k] - 3 && cZombieZ[i] <= cRockZ[k] + 3) {
+											cZombieZ[i] -= 0.2;
+											timerFromIncZ[i] = true;
+											whichRock[i] = k;
+											break;
+										}
 									}
 								}
 							}
@@ -2095,52 +2505,52 @@ void zombieGetCloser(int val) {
 				}
 			}
 		}
-	}
-	/*for (int i = 0;i < 6;i++) {
-		for (int j = i + 1;j < 6;j++) {
-			if ((fabs(cZombieX[i] - cZombieX[j]) <= 0.2) && (fabs(cZombieX[i] - cZombieX[j]))
-		}
-	}*/
+		/*for (int i = 0;i < 6;i++) {
+			for (int j = i + 1;j < 6;j++) {
+				if ((fabs(cZombieX[i] - cZombieX[j]) <= 0.2) && (fabs(cZombieX[i] - cZombieX[j]))
+			}
+		}*/
 
-	glutPostRedisplay();
-	glutTimerFunc(350, zombieGetCloser, 0);
+		glutPostRedisplay();
+		glutTimerFunc(350, zombieGetCloser, 0);
+	}
 }
 
 void sound(int val) {
-	int i = 0;
-	while(i<6) {
-		if (damageSoundOnlyOnce[i] == true) {
-			SoundEngine->play2D("audio/damaged.mp3", false);
-			break;
+	if (level1) {
+		int i = 0;
+		while (i < 6) {
+			if (damageSoundOnlyOnce[i] == true) {
+				SoundEngine->play2D("audio/damaged.mp3", false);
+				break;
+			}
+			i++;
 		}
-		i++;
-	}
 
-	while (i < 6) {
-		if (damageSoundOnlyOnce[i] == true) {
-			lives--;
+		while (i < 6) {
+			if (damageSoundOnlyOnce[i] == true) {
+				lives--;
+			}
+			i++;
 		}
-		i++;
-	}
 
-	//glutPostRedisplay();
-	glutTimerFunc(1000, sound, 0);
+		glutTimerFunc(1000, sound, 0);
+	}
 }
 
 void updateLight(int value) {
-	// Decrease the light intensity values
-	for (int i = 0; i < 3; ++i) {
-		lightIntensity[i] -= 0.01f;  // You can adjust the rate of change here
-		if (lightIntensity[i] < 0.0f) {
-			lightIntensity[i] = 0.0f;  // Ensure intensity doesn't go below 0
+	if (level1) {
+		for (int i = 0; i < 3; ++i) {
+			lightIntensity[i] -= 0.01f; 
+			if (lightIntensity[i] < 0.0f) {
+				lightIntensity[i] = 0.0f;  
+			}
 		}
+
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+
+		glutTimerFunc(1000, updateLight, 0); 
 	}
-
-	// Update the light intensity
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
-
-	// Schedule the next update
-	glutTimerFunc(1000, updateLight, 0);  // Adjust the timer interval as needed
 }
 
 
@@ -2179,11 +2589,12 @@ void main(int argc, char** argv)
 
 	myInit();
 
-	glutTimerFunc(0, shootTimer, 0);
-	glutTimerFunc(0, shootRotation, 0);
-	glutTimerFunc(0, zombieGetCloser, 0);
-	glutTimerFunc(0, sound, 0);
-	glutTimerFunc(0, updateLight, 0);
+		glutTimerFunc(0, shootTimer, 0);
+		glutTimerFunc(0, shootRotation, 0);
+		glutTimerFunc(0, zombieGetCloser, 0);
+		glutTimerFunc(0, sound, 0);
+		glutTimerFunc(0, updateLight, 0);
+	
 
 
 	LoadAssets();
