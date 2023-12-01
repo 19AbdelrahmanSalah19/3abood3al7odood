@@ -3028,6 +3028,7 @@ void fireObstaclesMove(int value) {
 			cWarriorZ -= 6;
 			camera.moveZ(6);
 			start = false;
+			SoundEngine->play2D("audio/fight.mp3", false);
 		}
 		
 	}
