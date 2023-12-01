@@ -109,6 +109,15 @@ GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
 GLfloat lightIntensity2[] = { 0.7, 0.7, 0.7, 1.0f };
 bool level1 = true;
 bool level2 = false;
+float fireObstaclesX[4] = { -145,-135,-100,-60 };
+float fireObstaclesY[4] = { 2,2,2,2 };
+float fireObstaclesZ[4] = { 110, 70,30,40 };
+bool incrementOb1 = true;
+bool incrementOb2 = false;
+bool incrementOb3 = true;
+bool incrementOb4 = false;
+bool fight = false;
+bool start = true;
 
 
 GLuint tex;
@@ -398,7 +407,7 @@ void InitLightSource()
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 
 	// Finally, define light source 0 position in World Space
-	GLfloat light_position[] = { -140.0f, 10.0f, 250.0f, 1.0f };
+	GLfloat light_position[] = { -140.0f, 10.0f, 140.0f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 }
 
@@ -518,13 +527,13 @@ void RenderGround2()
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);	// Set quad normal direction.
 	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
-	glVertex3f(-180, 0, 250);
+	glVertex3f(-155, 0, 140);
 	glTexCoord2f(5, 0);
-	glVertex3f(-180, 0, 20);
+	glVertex3f(-155, 0, 20);
 	glTexCoord2f(5, 5);
-	glVertex3f(-100, 0, 100);
+	glVertex3f(-125, 0, 20);
 	glTexCoord2f(0, 5);
-	glVertex3f(-100, 0, 250);
+	glVertex3f(-125, 0, 140);
 	glEnd();
 	glPopMatrix();
 
@@ -532,13 +541,13 @@ void RenderGround2()
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);	// Set quad normal direction.
 	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
-	glVertex3f(-180, 0, 20);
+	glVertex3f(-155, 0, 20);
 	glTexCoord2f(5, 0);
-	glVertex3f(40, 0, 20);
+	glVertex3f(15, 0, 20);
 	glTexCoord2f(5, 5);
-	glVertex3f(40, 0, 100);
+	glVertex3f(15, 0, 50);
 	glTexCoord2f(0, 5);
-	glVertex3f(-180, 0, 100);
+	glVertex3f(-155, 0, 50);
 	glEnd();
 	glPopMatrix();
 
@@ -546,13 +555,13 @@ void RenderGround2()
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);	// Set quad normal direction.
 	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
-	glVertex3f(-40, 0, 100);
+	glVertex3f(-15, 0, 50);
 	glTexCoord2f(5, 0);
-	glVertex3f(-40, 0, 0);
+	glVertex3f(-15, 0, 0);
 	glTexCoord2f(5, 5);
-	glVertex3f(40, 0, 0);
+	glVertex3f(15, 0, 0);
 	glTexCoord2f(0, 5);
-	glVertex3f(40, 0, 100);
+	glVertex3f(15, 0, 50);
 	glEnd();
 	glPopMatrix();
 
@@ -560,19 +569,19 @@ void RenderGround2()
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);	// Set quad normal direction.
 	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
-	glVertex3f(-80, 0, 0);
+	glVertex3f(-50, 0, 0);
 	glTexCoord2f(5, 0);
-	glVertex3f(80, 0, 0);
+	glVertex3f(50, 0, 0);
 	glTexCoord2f(5, 5);
-	glVertex3f(80, 0, -80);
+	glVertex3f(50, 0, -50);
 	glTexCoord2f(0, 5);
-	glVertex3f(-80, 0, -80);
+	glVertex3f(-50, 0, -50);
 	glEnd();
 	glPopMatrix();
 
 	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
 
-	glColor3f(0.5, 0.5, 0.5);	// Set material back to white instead of grey used for the ground texture.
+	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
 }
 
 void RenderWall()
@@ -646,6 +655,175 @@ void RenderWall()
 	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
 }
 
+void RenderWall2()
+{
+	glDisable(GL_LIGHTING);	// Disable lighting 
+
+	glColor3f(0.6, 0.6, 0.6);	// Dim the ground texture a bit
+
+	glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
+
+	glBindTexture(GL_TEXTURE_2D, tex_wall.texture[0]);	// Bind the ground texture
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-125, 0, 50);
+	glTexCoord2f(5, 0);
+	glVertex3f(-125, 15, 50);
+	glTexCoord2f(5, 5);
+	glVertex3f(-125, 15, 140);
+	glTexCoord2f(0, 5);
+	glVertex3f(-125, 0, 140);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-155, 0, 20);
+	glTexCoord2f(5, 0);
+	glVertex3f(-155, 15, 20);
+	glTexCoord2f(5, 5);
+	glVertex3f(-155, 15, 140);
+	glTexCoord2f(0, 5);
+	glVertex3f(-155, 0, 140);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-155, 0, 20);
+	glTexCoord2f(5, 0);
+	glVertex3f(-155, 15, 20);
+	glTexCoord2f(5, 5);
+	glVertex3f(-15, 15, 20);
+	glTexCoord2f(0, 5);
+	glVertex3f(-15, 0, 20);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-125, 0, 50);
+	glTexCoord2f(5, 0);
+	glVertex3f(-125, 15, 50);
+	glTexCoord2f(5, 5);
+	glVertex3f(15, 15, 50);
+	glTexCoord2f(0, 5);
+	glVertex3f(15, 0, 50);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-15, 0, 20);
+	glTexCoord2f(5, 0);
+	glVertex3f(-15, 15, 20);
+	glTexCoord2f(5, 5);
+	glVertex3f(-15, 15, 0);
+	glTexCoord2f(0, 5);
+	glVertex3f(-15, 0, 0);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(15, 0, 50);
+	glTexCoord2f(5, 0);
+	glVertex3f(15, 15, 50);
+	glTexCoord2f(5, 5);
+	glVertex3f(15, 15, 0);
+	glTexCoord2f(0, 5);
+	glVertex3f(15, 0, 0);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-15, 0, 0);
+	glTexCoord2f(5, 0);
+	glVertex3f(-15, 15, 0);
+	glTexCoord2f(5, 5);
+	glVertex3f(-50, 15, 0);
+	glTexCoord2f(0, 5);
+	glVertex3f(-50, 0, 0);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(15, 0, 0);
+	glTexCoord2f(5, 0);
+	glVertex3f(15, 15, 0);
+	glTexCoord2f(5, 5);
+	glVertex3f(50, 15, 0);
+	glTexCoord2f(0, 5);
+	glVertex3f(50, 0, 0);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(50, 0, 0);
+	glTexCoord2f(5, 0);
+	glVertex3f(50, 15, 0);
+	glTexCoord2f(5, 5);
+	glVertex3f(50, 15, -50);
+	glTexCoord2f(0, 5);
+	glVertex3f(50, 0, -50);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(50, 0, -50);
+	glTexCoord2f(5, 0);
+	glVertex3f(50, 15, -50);
+	glTexCoord2f(5, 5);
+	glVertex3f(-50, 15, -50);
+	glTexCoord2f(0, 5);
+	glVertex3f(-50, 0, -50);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);	// Set quad normal direction.
+	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+	glVertex3f(-50, 0, -50);
+	glTexCoord2f(5, 0);
+	glVertex3f(-50, 15, -50);
+	glTexCoord2f(5, 5);
+	glVertex3f(-50, 15, 0);
+	glTexCoord2f(0, 5);
+	glVertex3f(-50, 0, 0);
+	glEnd();
+	glPopMatrix();
+
+	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
+
+	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+}
+
 //void RenderRock()
 //{
 //	glDisable(GL_LIGHTING);	// Disable lighting 
@@ -674,7 +852,7 @@ void RenderWall()
 
 void drawGun() {
 
-	
+	glColor3d(0.5, 0.5, 0.5);
 	if (bulletP) {
 		/*glPushMatrix();
 		glColor3d(0, 0, 1);
@@ -833,9 +1011,10 @@ void myDisplay(void)
 
 
 
-	GLfloat lightPosition[] = { -140.0f, 0.0f, 250.0f, 0.0f };
+	GLfloat lightPosition[] = { -140.0f, 0.0f, 140.0f, 0.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
+	//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
 	// Draw Ground
 
 	if (level1) {
@@ -843,6 +1022,8 @@ void myDisplay(void)
 		glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);*/
 		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+
+		
 
 		RenderGround();
 
@@ -1028,7 +1209,7 @@ void myDisplay(void)
 
 		RenderGround2();
 
-		//RenderWall();
+		RenderWall2();
 
 		GLUquadricObj* qobj;
 		qobj = gluNewQuadric();
@@ -1051,6 +1232,45 @@ void myDisplay(void)
 		drawGun();
 		glPopMatrix();
 
+		glPushMatrix();
+		glTranslatef(cGunX, cGunY, cGunZ);
+		glRotatef(rotateGun, 0, 1, 0);
+		if (firstPersonShooter)
+			glTranslated(-38, 35, -20);
+		else
+			glTranslated(-38, 35, -15);
+		glScaled(0.125, 0.125, 1);
+		drawHealth();
+		glPopMatrix();
+
+		for (int i = 0;i < 4;i++) {
+			glPushMatrix();
+			glTranslated(fireObstaclesX[i],fireObstaclesY[i],fireObstaclesZ[i]);
+			glRotated(rotatefireBall, 0, 1, 0);
+			glBindTexture(GL_TEXTURE_2D, tex3);
+			gluQuadricTexture(qobj, true);
+			gluQuadricNormals(qobj, GL_SMOOTH);
+			gluSphere(qobj, 2, 100, 100);
+			glPopMatrix();
+		}
+
+		if (powerShot) {
+			glPushMatrix();
+			glColor3f(0.0, 0.0, 0.0);
+			glTranslatef(cGunX, cGunY, cGunZ);
+			glRotatef(rotateGun, 0, 1, 0);
+			if (firstPersonShooter)
+				glTranslated(-1, 3.5, 0);
+			else
+				glTranslated(-1, 3.5, 5);
+			glRasterPos2i(0, 0);
+
+			std::string powerShot = " PowerShot! ";
+			for (char c : powerShot) {
+				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
+			}
+			glPopMatrix();
+		}
 
 		glPushMatrix();
 		glColor3f(0.0, 0.0, 0.0);
@@ -1061,7 +1281,7 @@ void myDisplay(void)
 		else
 			glTranslated(1, 3.5, 5);
 		glRasterPos2i(0, 0);
-		if (GameScore == 120) {
+		if (GameScore == 340) {
 			if (!alamy) {
 				SoundEngine->play2D("audio/perfect.mp3", false);
 				alamy = true;
@@ -1078,6 +1298,7 @@ void myDisplay(void)
 				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
 			}
 		}
+
 		glPopMatrix();
 
 		
@@ -1536,7 +1757,7 @@ void myKeyboard(unsigned char button, int x, int y)
 		}
 	}
 
-	else if (level2) {
+	else if (level2 && !fight) {
 		float d = 0.5;
 		switch (button)
 		{
@@ -1632,6 +1853,95 @@ void myKeyboard(unsigned char button, int x, int y)
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
 				camera.moveX(-d);			
+			}
+			else if (leftView) {
+				cGunZ -= 0.5;
+				cWarriorZ -= 0.5;
+				camera.moveX(-d);
+			}
+			break;
+		case 'c':
+			if (firstPersonShooter) {
+				camera.moveZ(-5);
+				firstPersonShooter = false;
+				thirdPersonShooter = true;
+				player = true;;
+			}
+			else if (thirdPersonShooter) {
+				camera.moveZ(5);
+				firstPersonShooter = true;
+				thirdPersonShooter = false;
+				player = false;
+			}
+			break;
+			/*case 'n':
+				camera.sideView();
+				break;
+			case 'm':
+				camera.topView();
+				break;*/
+				/*case 'k':
+					printf("Hello");
+					shoot = true;
+					break;*/
+		case 27:
+			exit(0);
+			break;
+		default:
+			break;
+		}
+	}
+
+	else if (level2 && fight) {
+		float d = 0.5;
+		switch (button)
+		{
+		case 'k':
+			if (powerShot) {
+				shootP = true;
+				bulletP = true;
+			}
+			break;
+		case 'a':
+			//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
+			if (frontView) {
+				cGunX -= 0.5;
+				cWarriorX -= 0.5;
+				camera.moveX(d);
+
+			}
+			else if (backView) {
+				cGunX += 0.5;
+				cWarriorX += 0.5;
+				camera.moveX(d);
+			}
+			else if (rightView) {
+				cGunZ -= 0.5;
+				cWarriorZ -= 0.5;
+				camera.moveX(d);
+			}
+			else if (leftView) {
+				cGunZ += 0.5;
+				cWarriorZ += 0.5;
+				camera.moveX(d);
+			}
+			break;
+		case 'd':
+			//printf("fview: %d, rView: %d, lView %d, bView: %d", frontView, rightView, leftView, backView);
+			if (frontView) {
+				cGunX += 0.5;
+				cWarriorX += 0.5;
+				camera.moveX(-d);
+			}
+			else if (backView) {
+				cGunX -= 0.5;
+				cWarriorX -= 0.5;
+				camera.moveX(-d);
+			}
+			else if (rightView) {
+				cGunZ += 0.5;
+				cWarriorZ += 0.5;
+				camera.moveX(-d);
 			}
 			else if (leftView) {
 				cGunZ -= 0.5;
@@ -1882,7 +2192,7 @@ void Special(int key, int x, int y) {
 			break;
 		}
 	}
-	else if (level2) {
+	else if (level2 && !fight) {
 		switch (key) {
 	
 		case GLUT_KEY_DOWN:
@@ -1951,6 +2261,7 @@ void Special(int key, int x, int y) {
 			break;
 		}
 	}
+	
 
 	glutPostRedisplay();
 }
@@ -1996,8 +2307,10 @@ void myMouse(int button, int state, int x, int y)
 	{
 		cameraZoom = y;
 	}*/
-	if (button == GLUT_LEFT_BUTTON) {
-		shoot = true;
+	if (level1 || fight) {
+		if (button == GLUT_LEFT_BUTTON) {
+			shoot = true;
+		}
 	}
 }
 
@@ -2173,8 +2486,9 @@ void shootTimer(int val) {
 							collideP[i] = false;
 					}
 				}
-				if (shootTimeP == 50)
+				if (shootTimeP == 50) {
 					powerShot = false;
+				}
 			}
 			else {
 				//shootSound = false;
@@ -2187,56 +2501,9 @@ void shootTimer(int val) {
 				bulletCollidesRockP = false;
 			}
 		}
-		//glTranslatef(10, 4, 0);
 
 
-		/*if (firstPersonShooter) {
-			if (frontView) {
-				ex = cGunX - 1;
-				ey = cGunY + 0.5;
-				ez = cGunZ + 2;
-			}
-			else if (backView) {
-				ex = cGunX + 1;
-				ey = cGunY + 0.5;
-				ez = cGunZ - 2;
-			}
-			else if (rightView) {
-				ex = cGunX - 2;
-				ey = cGunY + 0.5;
-				ez = cGunZ - 1;
-			}
-			else if (leftView) {
-				ex = cGunX + 2;
-				ey = cGunY + 0.5;
-				ez = cGunZ + 1;
-			}
-		}
-
-		else if (thirdPersonShooter) {
-			if (frontView) {
-				ex = cGunX - 1;
-				ey = cGunY + 0.5;
-				ez = cGunZ + 4;
-			}
-			else if (backView) {
-				ex = cGunX + 1;
-				ey = cGunY + 0.5;
-				ez = cGunZ - 4;
-			}
-			else if (rightView) {
-				ex = cGunX - 4;
-				ey = cGunY + 0.5;
-				ez = cGunZ - 1;
-			}
-			else if (leftView) {
-				ex = cGunX + 4;
-				ey = cGunY + 0.5;
-				ez = cGunZ + 1;
-			}
-		}*/
-		//20, 4.5, -33
-		if (cWarriorX >= 19 && cWarriorX <= 21 && cWarriorZ >= -34 && cWarriorZ <= -32) {
+		if (cWarriorX >= 18 && cWarriorX <= 22 && cWarriorZ >= -34 && cWarriorZ <= -31) {
 			level1 = false;
 			level2 = true;
 
@@ -2261,32 +2528,101 @@ void shootTimer(int val) {
 				rotateGun -= 90;
 			}
 
+
+
 			cGunX -= 160;
 			cWarriorX -= 160;
 			camera.moveX(160);
 
-			cGunZ += 283;
-			cWarriorZ += 283;
-			camera.moveZ(-283);
+			cGunZ += 168;
+			cWarriorZ += 168;
+			camera.moveZ(-168);
 
-			/*lightIntensity[0] = 0.7f;
-			lightIntensity[1] = 0.7f;
-			lightIntensity[2] = 0.7f;*/
-				/*for (int i = 0; i < 3; ++i) {
-					lightIntensity[i] = 0.7;  
-				}*/
-			//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
-
-
+			 lives = 8;
+			 for (int i = 0;i < 8;i++) {
+				 health[i] = true;
+			 }
 
 		}
-		glutPostRedisplay();
-		glutTimerFunc(1, shootTimer, 0);
+		
 	}
+
+	if (fight) {
+		if (shoot && shootTime > 0) {
+			if (!shootSound) {
+				SoundEngine->play2D("audio/gunShot.mp3", false);
+				shootSound = true;
+			}
+			cbulletx = 0.0;
+			cbullety = 0.0;
+			cbulletz = 0.0;
+			bulletZ -= 1;
+			shootTime -= 1;
+			//cbulletz -= 1;
+			if (shootTime == 49)
+				shot = true;
+
+			float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
+			float sinTheta = sin((rotateGun - angleX) * PI / 180.0);
+
+			cbulletx = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */((bulletZ - 1) * sinTheta) + cGunX;
+			cbullety = cbullety + 0.5 + cGunY;
+			cbulletz = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ ((bulletZ - 1) * cosTheta) + cGunZ;
+			//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
+		}
+		else {
+			shootSound = false;
+			shoot = false;
+			shootTime = 50;
+			bulletZ = 0;
+			cbulletz = cGunZ;
+			bullet = true;
+		}
+
+		if (powerShot) {
+			if (shootP && shootTimeP > 0) {
+				/*if (!shootSound) {
+					SoundEngine->play2D("audio/gunShot.mp3", false);
+					shootSound = true;
+				}*/
+				cbulletxP = 0.0;
+				cbulletyP = 0.0;
+				cbulletzP = 0.0;
+				bulletZP -= 2;
+				shootTimeP -= 1;
+				//cbulletz -= 1;
+				if (shootTimeP == 99)
+					shotP = true;
+
+				float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
+				float sinTheta = sin((rotateGun - angleX) * PI / 180.0);
+
+				cbulletxP = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(-2 * cosTheta) + ((bulletZP + 1) * sinTheta) + cGunX;
+				cbulletyP = cbulletyP + 0.5 + cGunY;
+				cbulletzP = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZ;
+				//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
+
+				if (shootTimeP == 50) {
+					powerShot = false;
+				}
+			}
+			else {
+				//shootSound = false;
+				shootP = false;
+				shootTimeP = 100;
+				bulletZP = 0;
+				cbulletzP = cWarriorZ;
+				bulletP = false;
+				bulletCollidesRockP = false;
+			}
+		}
+	}
+	glutPostRedisplay();
+	glutTimerFunc(1, shootTimer, 0);
 }
 
 void shootRotation(int val) {
-	if (level1) {
+	if (level1 || fight) {
 		rotateSkull += 10;
 		rotatefireBall += 10;
 
@@ -2299,9 +2635,10 @@ void shootRotation(int val) {
 		}
 		else
 			shotAngle = 0;
-		glutPostRedisplay();
-		glutTimerFunc(60, shootRotation, 0);
+		
 	}
+	glutPostRedisplay();
+	glutTimerFunc(60, shootRotation, 0);
 }
 
 void zombieGetCloser(int val) {
@@ -2511,9 +2848,10 @@ void zombieGetCloser(int val) {
 			}
 		}*/
 
-		glutPostRedisplay();
-		glutTimerFunc(350, zombieGetCloser, 0);
+		
 	}
+	glutPostRedisplay();
+	glutTimerFunc(350, zombieGetCloser, 0);
 }
 
 void sound(int val) {
@@ -2534,8 +2872,9 @@ void sound(int val) {
 			i++;
 		}
 
-		glutTimerFunc(1000, sound, 0);
 	}
+	glutTimerFunc(1000, sound, 0);
+
 }
 
 void updateLight(int value) {
@@ -2549,8 +2888,151 @@ void updateLight(int value) {
 
 		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
 
-		glutTimerFunc(1000, updateLight, 0); 
 	}
+	glutTimerFunc(1000, updateLight, 0);
+
+}
+
+void fireObstaclesMove(int value) {
+	//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", fireObstaclesX[0], fireObstaclesX[1], fireObstaclesZ[2], fireObstaclesZ[3]);
+	if (level2) {
+		if (incrementOb1) {
+			fireObstaclesX[0]++;
+			if (fireObstaclesX[0] == -127) {
+				incrementOb1 = false;
+			}
+		}
+		else {
+			fireObstaclesX[0]--;
+			if (fireObstaclesX[0] == -153) {
+				incrementOb1 = true;
+			}
+		}
+
+		if (incrementOb2) {
+			fireObstaclesX[1]++;
+			if (fireObstaclesX[1] == -127) {
+				incrementOb2 = false;
+			}
+		}
+		else {
+			fireObstaclesX[1]--;
+			if (fireObstaclesX[1] == -153) {
+				incrementOb2 = true;
+			}
+		}
+
+		if (incrementOb3) {
+			fireObstaclesZ[2]++;
+			if (fireObstaclesZ[2] == 48) {
+				incrementOb3 = false;
+			}
+		}
+		else {
+			fireObstaclesZ[2]--;
+			if (fireObstaclesZ[2] == 22) {
+				incrementOb3 = true;
+			}
+		}
+
+		if (incrementOb4) {
+			fireObstaclesZ[3]++;
+			if (fireObstaclesZ[3] == 48) {
+				incrementOb4 = false;
+			}
+		}
+		else {
+			fireObstaclesZ[3]--;
+			if (fireObstaclesZ[3] == 22) {
+				incrementOb4 = true;
+			}
+		}
+
+		for (int i = 0;i < 2;i++) {
+			if (cWarriorX >= fireObstaclesX[i]-2 && cWarriorX <= fireObstaclesX[i] + 2 && cWarriorZ >= fireObstaclesZ[i] - 2 && cWarriorZ <= fireObstaclesZ[i] + 2) {
+				if (backView) {
+					frontView = true;
+					backView = false;
+					camera.rotateY(180);
+					rotateGun += 180;
+				}
+				else if (rightView) {
+					frontView = true;
+					rightView = false;
+					camera.rotateY(90); // rotate to your left
+					rotateGun += 90;
+				}
+				else if (leftView) {
+					frontView = true;
+					leftView = false;
+					camera.rotateY(-90); // rotate to your right
+					rotateGun -= 90;
+				}
+				cGunZ += 4;
+				cWarriorZ += 4;
+				camera.moveZ(-4);
+				lives--;
+				SoundEngine->play2D("audio/collided.mp3", false);
+			}
+		}
+
+		for (int i = 2;i < 4;i++) {
+			if (cWarriorX >= fireObstaclesX[i] - 2 && cWarriorX <= fireObstaclesX[i] + 2 && cWarriorZ >= fireObstaclesZ[i] - 2 && cWarriorZ <= fireObstaclesZ[i] + 2) {
+				if (backView) {
+					rightView = true;
+					backView = false;
+					camera.rotateY(90);
+					rotateGun += 90;
+				}
+				else if (frontView) {
+					rightView = true;
+					frontView = false;
+					camera.rotateY(-90); // rotate to your left
+					rotateGun -= 90;
+				}
+				else if (leftView) {
+					rightView = true;
+					leftView = false;
+					camera.rotateY(180); // rotate to your right
+					rotateGun += 180;
+				}
+				cGunX -= 4;
+				cWarriorX -= 4;
+				camera.moveZ(-4);
+				lives--;
+				SoundEngine->play2D("audio/collided.mp3", false);
+			}
+		}
+		
+		if (cWarriorX >= -15 && cWarriorX <= 15 && cWarriorZ < 0 && start) {
+			fight = true;
+			if (backView) {
+				frontView = true;
+				backView = false;
+				camera.rotateY(180);
+				rotateGun += 180;
+			}
+			else if (rightView) {
+				frontView = true;
+				rightView = false;
+				camera.rotateY(90); // rotate to your left
+				rotateGun += 90;
+			}
+			else if (leftView) {
+				frontView = true;
+				leftView = false;
+				camera.rotateY(-90); // rotate to your right
+				rotateGun -= 90;
+			}
+			cGunZ -= 6;
+			cWarriorZ -= 6;
+			camera.moveZ(6);
+			start = false;
+		}
+		
+	}
+	glutPostRedisplay();
+	glutTimerFunc(50, fireObstaclesMove, 0);
 }
 
 
@@ -2595,6 +3077,8 @@ void main(int argc, char** argv)
 		glutTimerFunc(0, sound, 0);
 		glutTimerFunc(0, updateLight, 0);
 	
+		glutTimerFunc(0, fireObstaclesMove, 0);
+
 
 
 	LoadAssets();
