@@ -30,7 +30,7 @@ bool FView = true;
 bool SView = false;
 bool TView = false;
 bool shoot = false;
-int shootTime = 50;
+int shootTime = 25;
 float bulletZ = 0.0;
 float cbulletx = 0.0;
 float cbullety = 0.0;
@@ -2382,7 +2382,7 @@ void shootTimer(int val) {
 			bulletZ -= 1;
 			shootTime -= 1;
 			//cbulletz -= 1;
-			if (shootTime == 49)
+			if (shootTime == 24)
 				shot = true;
 
 			float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
@@ -2430,7 +2430,7 @@ void shootTimer(int val) {
 		else {
 			shootSound = false;
 			shoot = false;
-			shootTime = 50;
+			shootTime = 25;
 			bulletZ = 0;
 			cbulletz = cGunZ;
 			oneZombiePerShot = false;
@@ -2559,7 +2559,7 @@ void shootTimer(int val) {
 			bulletZ -= 1;
 			shootTime -= 1;
 			//cbulletz -= 1;
-			if (shootTime == 49)
+			if (shootTime == 24)
 				shot = true;
 
 			float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
@@ -2573,7 +2573,7 @@ void shootTimer(int val) {
 		else {
 			shootSound = false;
 			shoot = false;
-			shootTime = 50;
+			shootTime = 25;
 			bulletZ = 0;
 			cbulletz = cGunZ;
 			bullet = true;
