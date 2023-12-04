@@ -23,6 +23,8 @@ ISoundEngine* SoundEngine = createIrrKlangDevice();
 
 float angleX = 0.0; 
 float angleXT = 0.0;
+float angleXTP = 0.0;
+
 int passX = 600;
 
 int WIDTH = 2280;
@@ -51,6 +53,9 @@ float cGunZ = 20.0;
 float cGunXT = 10.0;
 float cGunYT= 4.0;
 float cGunZT = 20.0;
+float cGunXTP = 10.0;
+float cGunYTP = 4.0;
+float cGunZTP = 20.0;
 float cRockX[6] = { -5.0,11.0,40.0,22.0,-15.0,-8.0 };
 float cRockY[6] = { 0.0,0.0,0.0,0.0,0.0,0.0 };
 float cRockZ[6] = { 0.0,-10,-21,-14,-5,-26 };
@@ -60,6 +65,8 @@ float cZombieZ[6] = { 0.0,-5.0,-30.0,-25.0,-4,-17.0};
 float cZombieRotateY[6] = { 0.0,0.0,0.0,0.0,0.0,0.0 };
 bool collide[6];
 bool collideP[6];
+bool collideM = false;
+bool collideMP = false;
 bool shot = false;
 bool shotP = false;
 float shotAngle = 0.0;
@@ -72,6 +79,7 @@ bool leftView = false;
 bool backView = false;
 float rotateGun = 0.0;
 float rotateGunT = 0.0;
+float rotateGunTP = 0.0;
 bool oneZombiePerShot = false;
 bool oneZombiePerShotP = false;
 bool fV, rV, lV, bV;
@@ -124,13 +132,18 @@ bool incrementOb3 = true;
 bool incrementOb4 = false;
 bool fight = false;
 bool start = true;
-int monsterHealth = 11;
-float mosterX[11] = { 0.75,0.6,0.45,0.3,0.15,0.0,-0.15,-0.3,-0.45,-0.6,-0.75 };
+int monsterHealth = 15;
+float monsterX[15] = { 1.05,0.9,0.75,0.6,0.45,0.3,0.15,0.0,-0.15,-0.3,-0.45,-0.6,-0.75,-0.9,-1.05};
 float cMonsterX = 0.0;
 float cMonsterY = 20.0;
 float cMonsterZ = -35.0;
 bool putShotInTemp = true;
+bool oneDamagePerShot = true;
+bool monsterKilled = false;
 
+bool putShotInTempP = true;
+
+bool oneDamagePerShotP = true;
 
 
 GLuint tex;
@@ -578,19 +591,22 @@ void RenderGround2()
 	glEnd();
 	glPopMatrix();
 
-	glPushMatrix();
-	glBegin(GL_QUADS);
-	glNormal3f(0, 1, 0);	// Set quad normal direction.
-	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
-	glVertex3f(-50, 0, 0);
-	glTexCoord2f(5, 0);
-	glVertex3f(50, 0, 0);
-	glTexCoord2f(5, 5);
-	glVertex3f(50, 0, -50);
-	glTexCoord2f(0, 5);
-	glVertex3f(-50, 0, -50);
-	glEnd();
-	glPopMatrix();
+	if (fight || monsterKilled) {
+		glPushMatrix();
+		glBegin(GL_QUADS);
+		glNormal3f(0, 1, 0);	// Set quad normal direction.
+		glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+		glVertex3f(-50, 0, 0);
+		glTexCoord2f(5, 0);
+		glVertex3f(50, 0, 0);
+		glTexCoord2f(5, 5);
+		glVertex3f(50, 0, -50);
+		glTexCoord2f(0, 5);
+		glVertex3f(-50, 0, -50);
+		glEnd();
+		glPopMatrix();
+	}
+	
 
 	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
 
@@ -691,6 +707,8 @@ void RenderWall2()
 	glVertex3f(-125, 0, 140);
 	glEnd();
 	glPopMatrix();
+
+	
 
 	glPushMatrix();
 	glBegin(GL_QUADS);
@@ -832,6 +850,51 @@ void RenderWall2()
 	glEnd();
 	glPopMatrix();
 
+	if (!fight && !monsterKilled) {
+		glPushMatrix();
+		glBegin(GL_QUADS);
+		glNormal3f(0, 1, 0);	// Set quad normal direction.
+		glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+		glVertex3f(-15, 0, 0);
+		glTexCoord2f(5, 0);
+		glVertex3f(-15, 15, 0);
+		glTexCoord2f(5, 5);
+		glVertex3f(-5, 15, 0);
+		glTexCoord2f(0, 5);
+		glVertex3f(-5, 0, 0);
+		glEnd();
+		glPopMatrix();
+
+		glPushMatrix();
+		glBegin(GL_QUADS);
+		glNormal3f(0, 1, 0);	// Set quad normal direction.
+		glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+		glVertex3f(15, 0, 0);
+		glTexCoord2f(5, 0);
+		glVertex3f(15, 15, 0);
+		glTexCoord2f(5, 5);
+		glVertex3f(5, 15, 0);
+		glTexCoord2f(0, 5);
+		glVertex3f(5, 0, 0);
+		glEnd();
+		glPopMatrix();
+
+		glPushMatrix();
+		glColor3d(0, 0, 0);
+		glBegin(GL_QUADS);
+		glNormal3f(0, 1, 0);	// Set quad normal direction.
+		glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
+		glVertex3f(5, 0, 0);
+		glTexCoord2f(5, 0);
+		glVertex3f(5, 15, 0);
+		glTexCoord2f(5, 5);
+		glVertex3f(-5, 15, 0);
+		glTexCoord2f(0, 5);
+		glVertex3f(-5, 0, 0);
+		glEnd();
+		glPopMatrix();
+	}
+
 	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
 
 	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
@@ -901,27 +964,46 @@ void drawBullet() {
 	}
 }
 
+void drawPower() {
+	if (bulletP) {
+		glPushMatrix();
+		GLUquadricObj* qobj;
+		qobj = gluNewQuadric();
+		//glRotated(rotatefireBall, 0, 1, 0);
+		glTranslatef(-2, 0.5, bulletZP + 1);
+		glBindTexture(GL_TEXTURE_2D, tex3);
+		gluQuadricTexture(qobj, true);
+		gluQuadricNormals(qobj, GL_SMOOTH);
+		gluSphere(qobj, 0.5, 100, 100);
+		glPopMatrix();
+	}
+}
+
+
+
 void drawGun() {
 
 	glColor3d(0.5, 0.5, 0.5);
 	if (level1 || fight) {
-		if (bulletP) {
-			/*glPushMatrix();
-			glColor3d(0, 0, 1);
-			glTranslatef(-2, 0.5, bulletZP + 1);
-			glutSolidSphere(0.5, 20, 20);
-			glPopMatrix();*/
+		if (!fight) {
+			if (bulletP) {
+				/*glPushMatrix();
+				glColor3d(0, 0, 1);
+				glTranslatef(-2, 0.5, bulletZP + 1);
+				glutSolidSphere(0.5, 20, 20);
+				glPopMatrix();*/
 
-			glPushMatrix();
-			GLUquadricObj* qobj;
-			qobj = gluNewQuadric();
-			//glRotated(rotatefireBall, 0, 1, 0);
-			glTranslatef(-2, 0.5, bulletZP + 1);
-			glBindTexture(GL_TEXTURE_2D, tex3);
-			gluQuadricTexture(qobj, true);
-			gluQuadricNormals(qobj, GL_SMOOTH);
-			gluSphere(qobj, 0.5, 100, 100);
-			glPopMatrix();
+				glPushMatrix();
+				GLUquadricObj* qobj;
+				qobj = gluNewQuadric();
+				//glRotated(rotatefireBall, 0, 1, 0);
+				glTranslatef(-2, 0.5, bulletZP + 1);
+				glBindTexture(GL_TEXTURE_2D, tex3);
+				gluQuadricTexture(qobj, true);
+				gluQuadricNormals(qobj, GL_SMOOTH);
+				gluSphere(qobj, 0.5, 100, 100);
+				glPopMatrix();
+			}
 		}
 
 		glPushMatrix();
@@ -1008,8 +1090,8 @@ void drawMonster() {
 	glColor3d(0, 0, 0);
 	glPushMatrix();
 	glTranslated(0, 0.15, 0);
-	/*if (collide)
-		glColor3d(1, 0, 0);*/
+	if (collideM || collideMP)
+		glColor3d(1, 0, 0);
 	glRotatef(90, 1, 0, 0);
 	glScalef(0.09, 0.09, 0.09);
 	model_zombie.Draw();
@@ -1017,7 +1099,7 @@ void drawMonster() {
 
 	for (int i = 0;i < monsterHealth;i++) {
 		glPushMatrix();
-		glTranslated(mosterX[i], 2.8, 0);
+		glTranslated(monsterX[i], 2.8, 0);
 		glColor3d(0, 1, 0); // Green color for the cube
 		glutSolidCube(0.3); // Draw a small cube
 		glPopMatrix();
@@ -1317,12 +1399,23 @@ void myDisplay(void)
 
 		if (fight) {
 			glPushMatrix();
+			glTranslatef(cGunXTP, cGunYTP, cGunZTP);
+			glRotatef(rotateGunTP - angleXTP, 0, 1, 0);
+			glRotatef(25, 1, 0, 0);
+			drawPower();
+			glPopMatrix();
+		}
+
+		if (fight) {
+			glPushMatrix();
 			glTranslatef(cGunXT, cGunYT, cGunZT);
 			glRotatef(rotateGunT - angleXT, 0, 1, 0);
 			glRotatef(25, 1, 0, 0);
 			drawBullet();
 			glPopMatrix();
 		}
+
+		
 
 		glPushMatrix();
 		glColor3d(0.3, 0.3, 0.3);
@@ -1374,12 +1467,14 @@ void myDisplay(void)
 			glPopMatrix();
 		}
 
-		glPushMatrix();
-		//glRotated(zombiePunchRotateAngle[i], 1, 0, 0);
-		glTranslatef(cMonsterX, cMonsterY, cMonsterZ);
-		glScalef(5, 5,5);
-		drawMonster();
-		glPopMatrix();
+		if (fight) {
+			glPushMatrix();
+			//glRotated(zombiePunchRotateAngle[i], 1, 0, 0);
+			glTranslatef(cMonsterX, cMonsterY, cMonsterZ);
+			glScalef(5, 5, 5);
+			drawMonster();
+			glPopMatrix();
+		}
 
 		glPushMatrix();
 		glColor3f(0.0, 0.0, 0.0);
@@ -1866,7 +1961,7 @@ void myKeyboard(unsigned char button, int x, int y)
 		}
 	}
 
-	else if (level2 && !fight) {
+	else if ((level2 && !fight) || (level2 && monsterKilled)) {
 		float d = 0.5;
 		switch (button)
 		{
@@ -1875,26 +1970,44 @@ void myKeyboard(unsigned char button, int x, int y)
 			if (frontView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				camera.moveZ(d);
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX>-157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1  && cWarriorX>4 && cWarriorX < 14))) {
+					cGunZ += 0.5;
+					cWarriorZ += 0.5;
+					}
+				else
+					camera.moveZ(d);
 				}
 
 				//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
 			else if (backView) {
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
-				camera.moveZ(d);
-	
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunZ -= 0.5;
+					cWarriorZ -= 0.5;
+				}
+				else
+					camera.moveZ(d);
 			}
 			else if (rightView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				camera.moveZ(d);
-				//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunX -= 0.5;
+					cWarriorX -= 0.5;
+				}
+				else
+					camera.moveZ(d);				//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
 			}
 			else if (leftView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				camera.moveZ(d);	
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunX += 0.5;
+					cWarriorX += 0.5;
+				}
+				else
+					camera.moveZ(d);
 			}
 			break;
 		case 's':
@@ -1902,24 +2015,42 @@ void myKeyboard(unsigned char button, int x, int y)
 			if (frontView) {
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
-				camera.moveZ(-d);
-			
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunZ -= 0.5;
+					cWarriorZ -= 0.5;
+				}
+				else
+					camera.moveZ(-d);
 			}
 			else if (backView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				camera.moveZ(-d);
-
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunZ += 0.5;
+					cWarriorZ += 0.5;
+				}
+				else
+					camera.moveZ(-d);
 			}
 			else if (rightView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				camera.moveZ(-d);
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunX += 0.5;
+					cWarriorX += 0.5;
+				}
+				else
+					camera.moveZ(-d);
 			}
 			else if (leftView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				camera.moveZ(-d);
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunX -= 0.5;
+					cWarriorX -= 0.5;
+				}
+				else
+					camera.moveZ(-d);
 			}
 			break;
 		case 'a':
@@ -1927,23 +2058,42 @@ void myKeyboard(unsigned char button, int x, int y)
 			if (frontView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				camera.moveX(d);
-			
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunX += 0.5;
+					cWarriorX += 0.5;
+				}
+				else
+					camera.moveX(d);
 			}
 			else if (backView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				camera.moveX(d);
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunX -= 0.5;
+					cWarriorX -= 0.5;
+				}
+				else
+					camera.moveX(d);
 			}
 			else if (rightView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				camera.moveX(d);
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunZ += 0.5;
+					cWarriorZ += 0.5;
+				}
+				else
+					camera.moveX(d);
 			}
 			else if (leftView) {
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
-				camera.moveX(d);
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunZ -= 0.5;
+					cWarriorZ -= 0.5;
+				}
+				else
+					camera.moveX(d);
 			}
 			break;
 		case 'd':
@@ -1951,22 +2101,42 @@ void myKeyboard(unsigned char button, int x, int y)
 			if (frontView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				camera.moveX(-d);
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunX -= 0.5;
+					cWarriorX -= 0.5;
+				}
+				else
+					camera.moveX(-d);
 			}
 			else if (backView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				camera.moveX(-d);		
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunX += 0.5;
+					cWarriorX += 0.5;
+				}
+				else
+					camera.moveX(-d);
 			}
 			else if (rightView) {
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
-				camera.moveX(-d);			
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunZ -= 0.5;
+					cWarriorZ -= 0.5;
+				}
+				else
+					camera.moveX(-d);
 			}
 			else if (leftView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				camera.moveX(-d);
+				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+					cGunZ += 0.5;
+					cWarriorZ += 0.5;
+				}
+				else
+					camera.moveX(-d);
 			}
 			break;
 		case 'c':
@@ -2325,6 +2495,27 @@ void Special(int key, int x, int y) {
 
 			camera.rotateY(180);
 			rotateGun += 180;
+
+			if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+				if (frontView) {
+					frontView = false;
+					backView = true;
+				}
+				else if (backView) {
+					frontView = true;
+					backView = false;
+				}
+				else if (rightView) {
+					leftView = true;
+					rightView = false;
+				}
+				else if (leftView) {
+					rightView = true;
+					leftView = false;
+				}
+				camera.rotateY(180);
+				rotateGun += 180;
+			}
 			break;
 		case GLUT_KEY_LEFT:
 			printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
@@ -2346,6 +2537,26 @@ void Special(int key, int x, int y) {
 			}
 			camera.rotateY(90); // rotate to your left
 			rotateGun += 90;
+			if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+				if (frontView) {
+					frontView = false;
+					rightView = true;
+				}
+				else if (backView) {
+					leftView = true;
+					backView = false;
+				}
+				else if (rightView) {
+					backView = true;
+					rightView = false;
+				}
+				else if (leftView) {
+					frontView = true;
+					leftView = false;
+				}
+				camera.rotateY(-90); // rotate to your right
+				rotateGun -= 90;
+			}
 			break;
 		case GLUT_KEY_RIGHT:
 			printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
@@ -2367,6 +2578,26 @@ void Special(int key, int x, int y) {
 			}
 			camera.rotateY(-90); // rotate to your right
 			rotateGun -= 90;
+			if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || ((cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14))) {
+				if (frontView) {
+					frontView = false;
+					leftView = true;
+				}
+				else if (backView) {
+					backView = false;
+					rightView = true;
+				}
+				else if (rightView) {
+					frontView = true;
+					rightView = false;
+				}
+				else if (leftView) {
+					backView = true;
+					leftView = false;
+				}
+				camera.rotateY(90); // rotate to your left
+				rotateGun += 90;
+			}
 			break;
 		}
 	}
@@ -2597,17 +2828,14 @@ void shootTimer(int val) {
 				}
 				if (shootTimeP == 50) {
 					powerShot = false;
+					shootP = false;
+					shootTimeP = 100;
+					bulletZP = 0;
+					cbulletzP = cWarriorZ;
+					oneZombiePerShotP = false;
+					bulletP = false;
+					bulletCollidesRockP = false;
 				}
-			}
-			else {
-				//shootSound = false;
-				shootP = false;
-				shootTimeP = 100;
-				bulletZP = 0;
-				cbulletzP = cWarriorZ;
-				oneZombiePerShotP = false;
-				bulletP = false;
-				bulletCollidesRockP = false;
 			}
 		}
 
@@ -2685,9 +2913,21 @@ void shootTimer(int val) {
 			cbulletx = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */((bulletZ - 1) * sinTheta) + cGunXT;
 			cbullety = cbullety + 0.5 + cGunYT;
 			cbulletz = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ ((bulletZ - 1) * cosTheta) + cGunZT;
-			//printf("  cXT: %f , cYT: %f , cZT: %f, rotateGT: %f, angleXT: %f,putShotInTemp: %b", cGunXT, cGunYT, cGunZT, rotateGunT, angleXT, putShotInTemp);
+			printf("  cXT: %f , cYT: %f , cZT: %f, rotateGT: %f, angleXT: %f,putShotInTemp: %d, oneDPShot: %d", cGunXT, cGunYT, cGunZT, rotateGunT, angleXT, putShotInTemp, oneDamagePerShot);
+			if (cbulletx > cMonsterX - 4.5 && cbulletx < cMonsterX + 4.5 && cbulletz >= cMonsterZ - 2 && cbulletz <= cMonsterZ + 2 && oneDamagePerShot) {
+				collideM = true;
+				oneDamagePerShot = false;
+				if (monsterHealth - 1 != 0)
+					monsterHealth--;
+				else {
+					fight = false;
+					monsterKilled = true;
+				}
+			}
 		}
 		else {
+			oneDamagePerShot = true;
+			collideM = false;
 			rotateGunT = rotateGun;
 			angleXT = angleX;
 			cGunXT = cGunX;
@@ -2702,6 +2942,8 @@ void shootTimer(int val) {
 			putShotInTemp = true;
 		}
 
+
+
 		if (powerShot) {
 			if (shootP && shootTimeP > 0) {
 				/*if (!shootSound) {
@@ -2713,30 +2955,48 @@ void shootTimer(int val) {
 				cbulletzP = 0.0;
 				bulletZP -= 2;
 				shootTimeP -= 1;
+				if (putShotInTempP) {
+					rotateGunT = rotateGun;
+					angleXTP = angleX;
+					cGunXTP = cGunX;
+					cGunYTP = cGunY;
+					cGunZTP = cGunZ;
+					putShotInTempP = false;
+				}
 				//cbulletz -= 1;
 				if (shootTimeP == 199)
 					shotP = true;
 
-				float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
-				float sinTheta = sin((rotateGun - angleX) * PI / 180.0);
+				float cosTheta = cos((rotateGunTP - angleXTP) * PI / 180.0);
+				float sinTheta = sin((rotateGunTP - angleXTP) * PI / 180.0);
 
-				cbulletxP = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(-2 * cosTheta) + ((bulletZP + 1) * sinTheta) + cGunX;
-				cbulletyP = cbulletyP + 0.5 + cGunY;
-				cbulletzP = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZ;
+				cbulletxP = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(-2 * cosTheta) + ((bulletZP + 1) * sinTheta) + cGunXTP;
+				cbulletyP = cbulletyP + 0.5 + cGunYTP;
+				cbulletzP = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZTP;
 				//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
-
+				printf("  cXT: %f , cYT: %f , cZT: %f, rotateGT: %f, angleXT: %f,putShotInTempP: %d", cGunXT, cGunYT, cGunZT, rotateGunT, angleXT, putShotInTempP);
+				if (cbulletxP > cMonsterX - 4.5 && cbulletxP < cMonsterX + 4.5 && cbulletzP >= cMonsterZ - 2 && cbulletzP <= cMonsterZ + 2 && oneDamagePerShotP) {
+					collideMP = true;
+					oneDamagePerShotP = false;
+					if (monsterHealth - 2 != 0)
+						monsterHealth -= 2;
+					else {
+						fight = false;
+						monsterKilled = true;
+					}
+				}
 				if (shootTimeP == 100) {
 					powerShot = false;
+					collideMP = false;
+					oneDamagePerShotP = true;
+					shootP = false;
+					shootTimeP = 200;
+					bulletZP = 0;
+					cbulletzP = cWarriorZ;
+					bulletP = false;
+					bulletCollidesRockP = false;
+					putShotInTempP = true;
 				}
-			}
-			else {
-				//shootSound = false;
-				shootP = false;
-				shootTimeP = 200;
-				bulletZP = 0;
-				cbulletzP = cWarriorZ;
-				bulletP = false;
-				bulletCollidesRockP = false;
 			}
 		}
 	}
@@ -3127,7 +3387,7 @@ void fireObstaclesMove(int value) {
 			}
 		}
 		
-		if (cWarriorX >= -15 && cWarriorX <= 15 && cWarriorZ < 0 && start) {
+		if (cWarriorX >= -5 && cWarriorX <= 5 && cWarriorZ < 0 && start) {
 			fight = true;
 			shootTime = 100;
 			shootTimeP = 200;
