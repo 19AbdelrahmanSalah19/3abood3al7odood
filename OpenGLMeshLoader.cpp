@@ -3105,7 +3105,7 @@ void monsterShotGetCloser(int val) {
 		}
 	}
 	glutPostRedisplay();
-	glutTimerFunc(1, monsterShotGetCloser, 0);
+	glutTimerFunc(75, monsterShotGetCloser, 0);
 
 }
 
