@@ -1,5 +1,4 @@
 ﻿  OpenGLMeshLoader.cpp
 D:\Abdelrahman\3abood3al7odood\TextureBuilder.h(27,52): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
 D:\Abdelrahman\3abood3al7odood\TextureBuilder.h(28,52): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-GLTexture.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
-  OpenGLMeshLoader.vcxproj -> D:\Abdelrahman\3abood3al7odood\Debug\OpenGLMeshLoader19.exe
+LINK : fatal error LNK1104: cannot open file 'D:\Abdelrahman\3abood3al7odood\Debug\OpenGLMeshLoader19.exe'

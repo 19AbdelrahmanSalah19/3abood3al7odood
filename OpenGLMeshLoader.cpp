@@ -140,6 +140,15 @@ float cMonsterZ = -35.0;
 bool putShotInTemp = true;
 bool oneDamagePerShot = true;
 bool monsterKilled = false;
+float cMonsterShotX = 0.0;
+float cMonsterShotY = 5.0;
+float cMonsterShotZ = -35.0;
+bool MonsterShoot = false;
+bool putMShotInTemp = true;
+float cWarriorXT = 8.0;
+float cWarriorYT = 0.0;
+float cWarriorZT = 22.0;
+
 
 bool putShotInTempP = true;
 
@@ -1085,7 +1094,24 @@ void drawZombie(int i) {
 	glPopMatrix();
 }
 
+void drawMonsterShot() {
+	if (MonsterShoot) {
+		glPushMatrix();
+		GLUquadricObj* qobj;
+		qobj = gluNewQuadric();
+		//glRotated(rotatefireBall, 0, 1, 0);
+		//glTranslatef(-2, 0.5, bulletZP + 1);
+		glBindTexture(GL_TEXTURE_2D, tex3);
+		gluQuadricTexture(qobj, true);
+		gluQuadricNormals(qobj, GL_SMOOTH);
+		gluSphere(qobj, 1, 100, 100);
+		glPopMatrix();
+	}
+}
+
 void drawMonster() {
+
+	
 
 	glColor3d(0, 0, 0);
 	glPushMatrix();
@@ -1372,6 +1398,7 @@ void myDisplay(void)
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);*/
 		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity2);
 
+		
 
 		RenderGround2();
 
@@ -1391,11 +1418,20 @@ void myDisplay(void)
 		gluSphere(qobj, 97.5, 1000, 1000);
 		glPopMatrix();
 
+		
+
 		glPushMatrix();
 		glTranslatef(cGunX, cGunY, cGunZ);
 		glRotatef(rotateGun - angleX, 0, 1, 0);
 		drawPlayer();
 		glPopMatrix();
+
+		if (fight) {
+			glPushMatrix();
+			glTranslatef(cMonsterShotX, cMonsterShotY, cMonsterShotZ);
+			drawMonsterShot();
+			glPopMatrix();
+		}
 
 		if (fight) {
 			glPushMatrix();
@@ -1466,6 +1502,8 @@ void myDisplay(void)
 			}
 			glPopMatrix();
 		}
+
+		
 
 		if (fight) {
 			glPushMatrix();
@@ -3024,6 +3062,53 @@ void shootRotation(int val) {
 	glutTimerFunc(60, shootRotation, 0);
 }
 
+void monsterShotGetCloser(int val) {
+	if (level2 && fight) {
+		if (!MonsterShoot) {
+			MonsterShoot = true;
+			cMonsterShotX = cMonsterX;
+			cMonsterShotY = 5.0;
+			cMonsterShotZ = cMonsterZ;
+			putMShotInTemp = true;
+		}
+
+		else {
+			if (putMShotInTemp) {
+				cWarriorXT = cWarriorX;
+				cWarriorZT = cWarriorZ;
+				putMShotInTemp = false;
+			}
+
+			if (cMonsterShotX <= cWarriorXT + 0.5 && cMonsterShotX >= cWarriorXT - 0.5 && cMonsterShotZ <= cWarriorZT + 0.5 && cMonsterShotZ >= cWarriorZT - 0.5) {
+				MonsterShoot = false;
+				if (cMonsterShotX <= cWarriorX + 2 && cMonsterShotX >= cWarriorX - 2 && cMonsterShotZ <= cWarriorZ + 2 && cMonsterShotZ >= cWarriorZ - 2) {
+					// warrior damaged
+					lives--;
+				}
+			}
+			else {
+
+				if (cMonsterShotX < cWarriorXT) {
+					cMonsterShotX += 1;
+				}
+				else if (cMonsterShotX > cWarriorXT) {
+					cMonsterShotX -= 1;
+				}
+				if (cMonsterShotZ < cWarriorZT) {
+					cMonsterShotZ += 1;
+				}
+				else if (cMonsterShotZ > cWarriorZT) {
+					cMonsterShotZ -= 1;
+				}
+				printf("  cMX: %f , cMZ: %f , cWX: %f, cWZ: %f", cMonsterShotX, cMonsterShotZ, cWarriorXT, cWarriorZT);
+			}
+		}
+	}
+	glutPostRedisplay();
+	glutTimerFunc(1, monsterShotGetCloser, 0);
+
+}
+
 void zombieGetCloser(int val) {
 	if (level1) {
 		for (int i = 0;i < 6;i++) {
@@ -3461,6 +3546,7 @@ void main(int argc, char** argv)
 		glutTimerFunc(0, zombieGetCloser, 0);
 		glutTimerFunc(0, sound, 0);
 		glutTimerFunc(0, updateLight, 0);
+		glutTimerFunc(0, monsterShotGetCloser, 0);
 	
 		glutTimerFunc(0, fireObstaclesMove, 0);
 
