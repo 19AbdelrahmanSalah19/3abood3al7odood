@@ -21,7 +21,8 @@ ISoundEngine* SoundEngine = createIrrKlangDevice();
 #define PI 3.141592653589793238462643383279502884
 
 
-float angleX = 0.0; // Initialize rotation angle around the x-axis
+float angleX = 0.0; 
+float angleXT = 0.0;
 int passX = 600;
 
 int WIDTH = 2280;
@@ -47,6 +48,9 @@ float cWarriorZ = 22.0;
 float cGunX = 10.0;
 float cGunY = 4.0;
 float cGunZ = 20.0;
+float cGunXT = 10.0;
+float cGunYT= 4.0;
+float cGunZT = 20.0;
 float cRockX[6] = { -5.0,11.0,40.0,22.0,-15.0,-8.0 };
 float cRockY[6] = { 0.0,0.0,0.0,0.0,0.0,0.0 };
 float cRockZ[6] = { 0.0,-10,-21,-14,-5,-26 };
@@ -59,6 +63,7 @@ bool collideP[6];
 bool shot = false;
 bool shotP = false;
 float shotAngle = 0.0;
+float shotAngleT = 0.0;
 bool zombiefirstShot[6];
 bool zombieDied[6];
 bool frontView = true;
@@ -66,6 +71,7 @@ bool rightView = false;
 bool leftView = false;
 bool backView = false;
 float rotateGun = 0.0;
+float rotateGunT = 0.0;
 bool oneZombiePerShot = false;
 bool oneZombiePerShotP = false;
 bool fV, rV, lV, bV;
@@ -118,6 +124,13 @@ bool incrementOb3 = true;
 bool incrementOb4 = false;
 bool fight = false;
 bool start = true;
+int monsterHealth = 11;
+float mosterX[11] = { 0.75,0.6,0.45,0.3,0.15,0.0,-0.15,-0.3,-0.45,-0.6,-0.75 };
+float cMonsterX = 0.0;
+float cMonsterY = 20.0;
+float cMonsterZ = -35.0;
+bool putShotInTemp = true;
+
 
 
 GLuint tex;
@@ -824,6 +837,8 @@ void RenderWall2()
 	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
 }
 
+
+
 //void RenderRock()
 //{
 //	glDisable(GL_LIGHTING);	// Disable lighting 
@@ -850,27 +865,8 @@ void RenderWall2()
 // Display Function
 //=======================================================================
 
-void drawGun() {
 
-	glColor3d(0.5, 0.5, 0.5);
-	if (bulletP) {
-		/*glPushMatrix();
-		glColor3d(0, 0, 1);
-		glTranslatef(-2, 0.5, bulletZP + 1);
-		glutSolidSphere(0.5, 20, 20);
-		glPopMatrix();*/
-
-		glPushMatrix();
-		GLUquadricObj* qobj;
-		qobj = gluNewQuadric();
-		//glRotated(rotatefireBall, 0, 1, 0);
-		glTranslatef(-2, 0.5, bulletZP + 1);
-		glBindTexture(GL_TEXTURE_2D, tex3);
-		gluQuadricTexture(qobj, true);
-		gluQuadricNormals(qobj, GL_SMOOTH);
-		gluSphere(qobj, 0.5, 100, 100);
-		glPopMatrix();
-	}
+void drawPlayer() {
 
 	if (player) {
 		glPushMatrix();
@@ -880,7 +876,12 @@ void drawGun() {
 				break;
 			}
 		}
-		glTranslatef(-2, -4, 2);
+		if (level2 && fight) {
+			glTranslatef(-2, -4, 2);
+		}
+		else
+			glTranslatef(-2, -4, 2);
+
 		glRotatef(90, 1, 0, 0);
 		glScalef(0.065, 0.065, 0.065);
 		glRotated(180, 0, 0, 1);
@@ -888,14 +889,9 @@ void drawGun() {
 		glPopMatrix();
 	}
 
-	glPushMatrix();
-	//glTranslatef(10, 4, 10);
-	glRotatef(shotAngle, 1, 0, 0);
-	glRotatef(-90, 0, 1, 0);
-	glScalef(0.2, 0.2, 0.2);
-	model_Gun.Draw();
-	glPopMatrix();
+}
 
+void drawBullet() {
 	if (bullet) {
 		glPushMatrix();
 		glColor3d(0, 0, 0);
@@ -903,17 +899,62 @@ void drawGun() {
 		glutSolidSphere(0.1, 20, 20);
 		glPopMatrix();
 	}
+}
 
+void drawGun() {
+
+	glColor3d(0.5, 0.5, 0.5);
+	if (level1 || fight) {
+		if (bulletP) {
+			/*glPushMatrix();
+			glColor3d(0, 0, 1);
+			glTranslatef(-2, 0.5, bulletZP + 1);
+			glutSolidSphere(0.5, 20, 20);
+			glPopMatrix();*/
+
+			glPushMatrix();
+			GLUquadricObj* qobj;
+			qobj = gluNewQuadric();
+			//glRotated(rotatefireBall, 0, 1, 0);
+			glTranslatef(-2, 0.5, bulletZP + 1);
+			glBindTexture(GL_TEXTURE_2D, tex3);
+			gluQuadricTexture(qobj, true);
+			gluQuadricNormals(qobj, GL_SMOOTH);
+			gluSphere(qobj, 0.5, 100, 100);
+			glPopMatrix();
+		}
+
+		glPushMatrix();
+		//glTranslatef(10, 4, 10);
+		glRotatef(shotAngle, 1, 0, 0);
+		glRotatef(-90, 0, 1, 0);
+		glScalef(0.2, 0.2, 0.2);
+		/*if (level2 && fight)
+			glRotatef(-35, 0, 0, 1);*/
+		model_Gun.Draw();
+		glPopMatrix();
+
+		if (!fight) {
+			if (bullet) {
+				glPushMatrix();
+				glColor3d(0, 0, 0);
+				glTranslatef(0, 0.5, bulletZ - 1);
+				glutSolidSphere(0.1, 20, 20);
+				glPopMatrix();
+			}
+		}
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glPushMatrix();
+		glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+		glTranslatef(0, 0.5, -161);
+		gluCylinder(gluNewQuadric(), 0.05, 0.05, 160, 20, 20);
+		glPopMatrix();
+		glDisable(GL_BLEND);
+
+	}
 	
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glPushMatrix();
-	glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
-	glTranslatef(0, 0.5, -161);
-	gluCylinder(gluNewQuadric(), 0.05, 0.05, 160, 20, 20);
-	glPopMatrix();
-	glDisable(GL_BLEND);
 
 }
 
@@ -948,6 +989,45 @@ void drawZombie(int i) {
 	glColor3d(0, 0, 1);
 	glTranslated(0, -3.75, 0);
 	glRotated(90,1,0,0);
+	GLUquadric* quadric = gluNewQuadric();
+	gluCylinder(quadric, 1, 1, 0.2, 20, 20);
+
+	// Draw the top disk to cap the cylinder
+	//glTranslated(0, 0, -0.2);
+	gluDisk(quadric, 0.0, 1, 20, 20);
+
+	// Move to the bottom of the cylinder and draw the bottom disk
+	//glTranslated(0, 0, -0.2);
+	gluDisk(quadric, 0.0, 1, 20, 20);
+	glColor3d(0.5, 0.5, 0.5);
+	glPopMatrix();
+}
+
+void drawMonster() {
+
+	glColor3d(0, 0, 0);
+	glPushMatrix();
+	glTranslated(0, 0.15, 0);
+	/*if (collide)
+		glColor3d(1, 0, 0);*/
+	glRotatef(90, 1, 0, 0);
+	glScalef(0.09, 0.09, 0.09);
+	model_zombie.Draw();
+	glPopMatrix();
+
+	for (int i = 0;i < monsterHealth;i++) {
+		glPushMatrix();
+		glTranslated(mosterX[i], 2.8, 0);
+		glColor3d(0, 1, 0); // Green color for the cube
+		glutSolidCube(0.3); // Draw a small cube
+		glPopMatrix();
+	}
+
+
+	glPushMatrix();
+	glColor3d(0, 0, 1);
+	glTranslated(0, -3.75, 0);
+	glRotated(90, 1, 0, 0);
 	GLUquadric* quadric = gluNewQuadric();
 	gluCylinder(quadric, 1, 1, 0.2, 20, 20);
 
@@ -1172,7 +1252,11 @@ void myDisplay(void)
 		model_home.Draw();
 		glPopMatrix();
 
-
+		glPushMatrix();
+		glTranslatef(cGunX, cGunY, cGunZ);
+		glRotatef(rotateGun - angleX, 0, 1, 0);
+		drawPlayer();
+		glPopMatrix();
 
 		glPushMatrix();
 		glTranslatef(cGunX, cGunY, cGunZ);
@@ -1226,9 +1310,27 @@ void myDisplay(void)
 		glPopMatrix();
 
 		glPushMatrix();
+		glTranslatef(cGunX, cGunY, cGunZ);
+		glRotatef(rotateGun - angleX, 0, 1, 0);
+		drawPlayer();
+		glPopMatrix();
+
+		if (fight) {
+			glPushMatrix();
+			glTranslatef(cGunXT, cGunYT, cGunZT);
+			glRotatef(rotateGunT - angleXT, 0, 1, 0);
+			glRotatef(25, 1, 0, 0);
+			drawBullet();
+			glPopMatrix();
+		}
+
+		glPushMatrix();
 		glColor3d(0.3, 0.3, 0.3);
 		glTranslatef(cGunX, cGunY, cGunZ);
 		glRotatef(rotateGun - angleX, 0, 1, 0);
+		if (fight) {
+			glRotatef(25,1,0,0);
+		}
 		drawGun();
 		glPopMatrix();
 
@@ -1271,6 +1373,13 @@ void myDisplay(void)
 			}
 			glPopMatrix();
 		}
+
+		glPushMatrix();
+		//glRotated(zombiePunchRotateAngle[i], 1, 0, 0);
+		glTranslatef(cMonsterX, cMonsterY, cMonsterZ);
+		glScalef(5, 5,5);
+		drawMonster();
+		glPopMatrix();
 
 		glPushMatrix();
 		glColor3f(0.0, 0.0, 0.0);
@@ -2558,25 +2667,39 @@ void shootTimer(int val) {
 			cbulletz = 0.0;
 			bulletZ -= 1;
 			shootTime -= 1;
+			if (putShotInTemp) {
+				rotateGunT = rotateGun;
+				angleXT = angleX;
+				cGunXT = cGunX;
+				cGunYT = cGunY;
+				cGunZT = cGunZ;
+				putShotInTemp = false;
+			}
 			//cbulletz -= 1;
-			if (shootTime == 24)
+			if (shootTime == 99)
 				shot = true;
 
-			float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
-			float sinTheta = sin((rotateGun - angleX) * PI / 180.0);
+			float cosTheta = cos((rotateGunT - angleXT) * PI / 180.0);
+			float sinTheta = sin((rotateGunT - angleXT) * PI / 180.0);
 
-			cbulletx = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */((bulletZ - 1) * sinTheta) + cGunX;
-			cbullety = cbullety + 0.5 + cGunY;
-			cbulletz = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ ((bulletZ - 1) * cosTheta) + cGunZ;
-			//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
+			cbulletx = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */((bulletZ - 1) * sinTheta) + cGunXT;
+			cbullety = cbullety + 0.5 + cGunYT;
+			cbulletz = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ ((bulletZ - 1) * cosTheta) + cGunZT;
+			//printf("  cXT: %f , cYT: %f , cZT: %f, rotateGT: %f, angleXT: %f,putShotInTemp: %b", cGunXT, cGunYT, cGunZT, rotateGunT, angleXT, putShotInTemp);
 		}
 		else {
+			rotateGunT = rotateGun;
+			angleXT = angleX;
+			cGunXT = cGunX;
+			cGunYT = cGunY;
+			cGunZT = cGunZ;
 			shootSound = false;
 			shoot = false;
-			shootTime = 25;
+			shootTime = 100;
 			bulletZ = 0;
 			cbulletz = cGunZ;
 			bullet = true;
+			putShotInTemp = true;
 		}
 
 		if (powerShot) {
@@ -2591,7 +2714,7 @@ void shootTimer(int val) {
 				bulletZP -= 2;
 				shootTimeP -= 1;
 				//cbulletz -= 1;
-				if (shootTimeP == 99)
+				if (shootTimeP == 199)
 					shotP = true;
 
 				float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
@@ -2602,14 +2725,14 @@ void shootTimer(int val) {
 				cbulletzP = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZ;
 				//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
 
-				if (shootTimeP == 50) {
+				if (shootTimeP == 100) {
 					powerShot = false;
 				}
 			}
 			else {
 				//shootSound = false;
 				shootP = false;
-				shootTimeP = 100;
+				shootTimeP = 200;
 				bulletZP = 0;
 				cbulletzP = cWarriorZ;
 				bulletP = false;
@@ -3006,6 +3129,8 @@ void fireObstaclesMove(int value) {
 		
 		if (cWarriorX >= -15 && cWarriorX <= 15 && cWarriorZ < 0 && start) {
 			fight = true;
+			shootTime = 100;
+			shootTimeP = 200;
 			if (backView) {
 				frontView = true;
 				backView = false;
@@ -3029,8 +3154,7 @@ void fireObstaclesMove(int value) {
 			camera.moveZ(6);
 			start = false;
 			SoundEngine->play2D("audio/fight.mp3", false);
-		}
-		
+		}	
 	}
 	glutPostRedisplay();
 	glutTimerFunc(50, fireObstaclesMove, 0);
