@@ -38,6 +38,9 @@ float bulletZ = 0.0;
 float cbulletx = 0.0;
 float cbullety = 0.0;
 float cbulletz = 0.0;
+float cbulletMx = 0.0;
+float cbulletMy = 0.0;
+float cbulletMz = 0.0;
 bool shootP = false;
 int shootTimeP = 100;
 float bulletZP = 0.0;
@@ -137,6 +140,9 @@ float monsterX[15] = { 1.05,0.9,0.75,0.6,0.45,0.3,0.15,0.0,-0.15,-0.3,-0.45,-0.6
 float cMonsterX = 0.0;
 float cMonsterY = 20.0;
 float cMonsterZ = -35.0;
+float cMonsterXT = 0.0;
+float cMonsterYT = 20.0;
+float cMonsterZT = -35.0;
 bool putShotInTemp = true;
 bool oneDamagePerShot = true;
 bool monsterKilled = false;
@@ -148,6 +154,10 @@ bool putMShotInTemp = true;
 float cWarriorXT = 8.0;
 float cWarriorYT = 0.0;
 float cWarriorZT = 22.0;
+float monsterShotAngle = 0.0;
+float monsterRotateAngle = 0.0;
+float zombieRotateAngle[6] = { 0.0,0.0,0.0,0.0,0.0,0.0};
+float monsterBulletZ = 0.0;
 
 
 bool putShotInTempP = true;
@@ -1292,6 +1302,7 @@ void myDisplay(void)
 					//model_zombie.Draw(i);
 				glTranslatef(cZombieX[i], cZombieY[i], cZombieZ[i]);
 				glRotated(zombiePunchRotateAngle[i], 1, 0, 0);
+				glRotated(zombieRotateAngle[i], 0, 1, 0);
 				drawZombie(i);
 				glPopMatrix();
 			}
@@ -1428,7 +1439,9 @@ void myDisplay(void)
 
 		if (fight) {
 			glPushMatrix();
-			glTranslatef(cMonsterShotX, cMonsterShotY, cMonsterShotZ);
+			glTranslatef(cMonsterXT, 4.5, cMonsterZT);
+			glRotatef(monsterShotAngle, 0, 1, 0);
+			glTranslatef(0, 0, monsterBulletZ);
 			drawMonsterShot();
 			glPopMatrix();
 		}
@@ -1450,6 +1463,7 @@ void myDisplay(void)
 			drawBullet();
 			glPopMatrix();
 		}
+
 
 		
 
@@ -1509,6 +1523,7 @@ void myDisplay(void)
 			glPushMatrix();
 			//glRotated(zombiePunchRotateAngle[i], 1, 0, 0);
 			glTranslatef(cMonsterX, cMonsterY, cMonsterZ);
+			glRotated(monsterRotateAngle, 0, 1, 0);
 			glScalef(5, 5, 5);
 			drawMonster();
 			glPopMatrix();
@@ -2919,7 +2934,9 @@ void shootTimer(int val) {
 			 }
 
 		}
-		
+		for (int i = 0;i < 6;i++) {
+			zombieRotateAngle[i] = atan((cWarriorX - cZombieX[i]) / (cWarriorZ - cZombieZ[i])) * 180.0 / PI;
+		}
 	}
 
 	if (fight) {
@@ -3037,6 +3054,7 @@ void shootTimer(int val) {
 				}
 			}
 		}
+		monsterRotateAngle = atan((cWarriorX - cMonsterX) / (cWarriorZ - cMonsterZ)) * 180.0 / PI;
 	}
 	glutPostRedisplay();
 	glutTimerFunc(1, shootTimer, 0);
@@ -3066,27 +3084,54 @@ void monsterShotGetCloser(int val) {
 	if (level2 && fight) {
 		if (!MonsterShoot) {
 			MonsterShoot = true;
-			cMonsterShotX = cMonsterX;
+			/*cMonsterShotX = cMonsterX;
 			cMonsterShotY = 5.0;
-			cMonsterShotZ = cMonsterZ;
+			cMonsterShotZ = cMonsterZ;*/
 			putMShotInTemp = true;
+			monsterBulletZ = 0.0;
 		}
 
 		else {
+			cbulletMx = 0.0;
+			cbulletMy = 0.0;
+			cbulletMz = 0.0;
+			monsterBulletZ += 1;
+			//shootTime -= 1;
+			/*if (putShotInTemp) {
+				rotateGunT = rotateGun;
+				angleXT = angleX;
+				cGunXT = cGunX;
+				cGunYT = cGunY;
+				cGunZT = cGunZ;
+				putShotInTemp = false;
+			}*/
 			if (putMShotInTemp) {
 				cWarriorXT = cWarriorX;
 				cWarriorZT = cWarriorZ;
 				putMShotInTemp = false;
+				cMonsterXT = cMonsterX;
+				cMonsterYT = cMonsterY;
+				cMonsterZT = cMonsterZ;
 			}
+			monsterShotAngle = atan((cWarriorXT-cMonsterXT)/(cWarriorZT-cMonsterZT)) * 180.0 / PI;
 
-			if (cMonsterShotX <= cWarriorXT + 0.5 && cMonsterShotX >= cWarriorXT - 0.5 && cMonsterShotZ <= cWarriorZT + 0.5 && cMonsterShotZ >= cWarriorZT - 0.5) {
+
+			float cosTheta = cos((monsterShotAngle) * PI / 180.0);
+			float sinTheta = sin((monsterShotAngle) * PI / 180.0);
+
+			cbulletMx = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(monsterBulletZ * sinTheta) + cMonsterXT;
+			cbulletMy = 4.5;
+			cbulletMz = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (monsterBulletZ * cosTheta) + cMonsterZT;
+			
+
+			if (cbulletMx <= cWarriorXT + 1 && cbulletMx >= cWarriorXT - 1 && cbulletMz <= cWarriorZT + 1 && cbulletMz >= cWarriorZT - 1) {
 				MonsterShoot = false;
-				if (cMonsterShotX <= cWarriorX + 2 && cMonsterShotX >= cWarriorX - 2 && cMonsterShotZ <= cWarriorZ + 2 && cMonsterShotZ >= cWarriorZ - 2) {
+				if (cbulletMx <= cWarriorX + 2 && cbulletMx >= cWarriorX - 2 && cbulletMz <= cWarriorZ + 2 && cbulletMz >= cWarriorZ - 2) {
 					// warrior damaged
 					lives--;
 				}
 			}
-			else {
+			/*else {
 
 				if (cMonsterShotX < cWarriorXT) {
 					cMonsterShotX += 1;
@@ -3099,13 +3144,13 @@ void monsterShotGetCloser(int val) {
 				}
 				else if (cMonsterShotZ > cWarriorZT) {
 					cMonsterShotZ -= 1;
-				}
-				printf("  cMX: %f , cMZ: %f , cWX: %f, cWZ: %f", cMonsterShotX, cMonsterShotZ, cWarriorXT, cWarriorZT);
-			}
+				}*/
+				printf("  cbMX: %f , cbMZ: %f , cWXT: %f, cWZT: %f", cbulletMx, cbulletMz, cWarriorXT, cWarriorZT);
+			//}
 		}
 	}
 	glutPostRedisplay();
-	glutTimerFunc(75, monsterShotGetCloser, 0);
+	glutTimerFunc(30, monsterShotGetCloser, 0);
 
 }
 
@@ -3485,7 +3530,7 @@ void fireObstaclesMove(int value) {
 			else if (rightView) {
 				frontView = true;
 				rightView = false;
-				camera.rotateY(90); // rotate to your left
+				camera.rotateY(90); // rotate to your lefts
 				rotateGun += 90;
 			}
 			else if (leftView) {
@@ -3494,9 +3539,9 @@ void fireObstaclesMove(int value) {
 				camera.rotateY(-90); // rotate to your right
 				rotateGun -= 90;
 			}
-			cGunZ -= 6;
-			cWarriorZ -= 6;
-			camera.moveZ(6);
+			cGunZ -= 8;
+			cWarriorZ -= 8;
+			camera.moveZ(8);
 			start = false;
 			SoundEngine->play2D("audio/fight.mp3", false);
 		}	
