@@ -165,6 +165,11 @@ bool putShotInTempP = true;
 bool oneDamagePerShotP = true;
 int timeTillCoinLands = 0;
 float rotateFinalTarget = 0.0;
+float finalTargetX = 0.0;
+float finalTargetY = 4.5;
+float finalTargetZ = -65;
+bool Won = false;
+bool Lost = false;
 
 
 GLuint tex;
@@ -254,7 +259,7 @@ public:
 class Camera {
 public:
 	Vector3f eye, center, up;
-	//10,4,9
+	//9,4.5,22
 	
 
 	Camera(float eyeX = ex, float eyeY = ey, float eyeZ = ez, float centerX = 9.0f, float centerY = 4.5f, float centerZ = 10.0f, float upX = 0.0f, float upY = 4.5f, float upZ = 0.0f) {
@@ -433,6 +438,8 @@ Model_3DS model_target;
 // Textures
 GLTexture tex_ground;
 GLTexture tex_wall;
+GLTexture tex_win;
+GLTexture tex_lose;
 GLTexture tex_rock;
 
 
@@ -1511,7 +1518,7 @@ void myDisplay(void)
 		glPushMatrix();
 		GLUquadricObj* qobj;
 		qobj = gluNewQuadric();
-		glTranslatef(0, 4.5, -65);
+		glTranslatef(finalTargetX, finalTargetY, finalTargetZ);
 		glScalef(3.0, 3.0, 3.0);
 		glRotated(rotateFinalTarget, 0, 1, 0);
 		glBindTexture(GL_TEXTURE_2D, tex3);
@@ -1666,6 +1673,170 @@ void myDisplay(void)
 
 		
 		//glDisable(GL_LIGHTING);  // Disable lighting when not needed
+	}
+
+	else if (Won) {
+		glDisable(GL_LIGHTING);	// Disable lighting 
+
+		glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
+
+		glBindTexture(GL_TEXTURE_2D, tex_win.texture[0]);	
+
+		if (frontView) {
+			glPushMatrix();
+			glTranslatef(camera.eye.x, camera.eye.y, camera.eye.z - 12);
+			glRotatef(rotateGun, 0, 1, 0);
+			glBegin(GL_QUADS);
+			glNormal3f(0, 1, 0);
+			glTexCoord2f(0, 0);
+			glVertex3f(-24, -22, 0);
+			glTexCoord2f(1, 0);
+			glVertex3f(22, -22, 0);
+			glTexCoord2f(1, 1);
+			glVertex3f(22, 25, 0);
+			glTexCoord2f(0, 1);
+			glVertex3f(-24, 25, 0);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (backView) {
+			glPushMatrix();
+			glTranslatef(camera.eye.x, camera.eye.y, camera.eye.z + 12);
+			glRotatef(rotateGun, 0, 1, 0);
+			glBegin(GL_QUADS);
+			glNormal3f(0, 1, 0);
+			glTexCoord2f(0, 0);
+			glVertex3f(-24, -22, 0);
+			glTexCoord2f(1, 0);
+			glVertex3f(22, -22, 0);
+			glTexCoord2f(1, 1);
+			glVertex3f(22, 25, 0);
+			glTexCoord2f(0, 1);
+			glVertex3f(-24, 25, 0);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (rightView) {
+			glPushMatrix();
+			glTranslatef(camera.eye.x + 12, camera.eye.y, camera.eye.z);
+			glRotatef(rotateGun, 0, 1, 0);
+			glBegin(GL_QUADS);
+			glNormal3f(0, 1, 0);
+			glTexCoord2f(0, 0);
+			glVertex3f(-24, -22, 0);
+			glTexCoord2f(1, 0);
+			glVertex3f(22, -22, 0);
+			glTexCoord2f(1, 1);
+			glVertex3f(22, 25, 0);
+			glTexCoord2f(0, 1);
+			glVertex3f(-24, 25, 0);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (leftView) {
+			glPushMatrix();
+			glTranslatef(camera.eye.x - 12, camera.eye.y, camera.eye.z);
+			glRotatef(rotateGun, 0, 1, 0);
+			glBegin(GL_QUADS);
+			glNormal3f(0, 1, 0);
+			glTexCoord2f(0, 0);
+			glVertex3f(-24, -22, 0);
+			glTexCoord2f(1, 0);
+			glVertex3f(22, -22, 0);
+			glTexCoord2f(1, 1);
+			glVertex3f(22, 25, 0);
+			glTexCoord2f(0, 1);
+			glVertex3f(-24, 25, 0);
+			glEnd();
+			glPopMatrix();
+		}
+
+		glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
+
+		glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+	}
+
+	else if (Lost) {
+		glDisable(GL_LIGHTING);	// Disable lighting 
+
+		glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
+
+		glBindTexture(GL_TEXTURE_2D, tex_lose.texture[0]);
+
+		
+		if (frontView) {
+			glPushMatrix();
+			glTranslatef(camera.eye.x, camera.eye.y, camera.eye.z-12);
+			glRotatef(rotateGun, 0, 1, 0);
+			glBegin(GL_QUADS);
+			glNormal3f(0, 1, 0);
+			glTexCoord2f(0, 0);
+			glVertex3f(-24, -22, 0);
+			glTexCoord2f(1, 0);
+			glVertex3f(22, -22, 0);
+			glTexCoord2f(1, 1);
+			glVertex3f(22, 25, 0);
+			glTexCoord2f(0, 1);
+			glVertex3f(-24, 25, 0);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (backView) {
+			glPushMatrix();
+			glTranslatef(camera.eye.x, camera.eye.y, camera.eye.z + 12);
+			glRotatef(rotateGun, 0, 1, 0);
+			glBegin(GL_QUADS);
+			glNormal3f(0, 1, 0);
+			glTexCoord2f(0, 0);
+			glVertex3f(-24, -22, 0);
+			glTexCoord2f(1, 0);
+			glVertex3f(22, -22, 0);
+			glTexCoord2f(1, 1);
+			glVertex3f(22, 25, 0);
+			glTexCoord2f(0, 1);
+			glVertex3f(-24, 25, 0);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (rightView) {
+			glPushMatrix();
+			glTranslatef(camera.eye.x + 12, camera.eye.y, camera.eye.z);
+			glRotatef(rotateGun, 0, 1, 0);
+			glBegin(GL_QUADS);
+			glNormal3f(0, 1, 0);
+			glTexCoord2f(0, 0);
+			glVertex3f(-24, -22, 0);
+			glTexCoord2f(1, 0);
+			glVertex3f(22, -22, 0);
+			glTexCoord2f(1, 1);
+			glVertex3f(22, 25, 0);
+			glTexCoord2f(0, 1);
+			glVertex3f(-24, 25, 0);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (leftView) {
+			glPushMatrix();
+			glTranslatef(camera.eye.x - 12, camera.eye.y, camera.eye.z);
+			glRotatef(rotateGun, 0, 1, 0);
+			glBegin(GL_QUADS);
+			glNormal3f(0, 1, 0);
+			glTexCoord2f(0, 0);
+			glVertex3f(-24, -22, 0);
+			glTexCoord2f(1, 0);
+			glVertex3f(22, -22, 0);
+			glTexCoord2f(1, 1);
+			glVertex3f(22, 25, 0);
+			glTexCoord2f(0, 1);
+			glVertex3f(-24, 25, 0);
+			glEnd();
+			glPopMatrix();
+		}
+		
+
+		glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
+
+		glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
 	}
 
 
@@ -3119,8 +3290,10 @@ void shootTimer(int val) {
 			if (cbulletx > cMonsterX - 4.5 && cbulletx < cMonsterX + 4.5 && cbulletz >= cMonsterZ - 2 && cbulletz <= cMonsterZ + 2 && oneDamagePerShot) {
 				collideM = true;
 				oneDamagePerShot = false;
-				if (monsterHealth - 1 != 0)
+				if (monsterHealth - 1 != 0) {
 					monsterHealth--;
+					GameScore += 10;
+				}
 				else {
 					fight = false;
 					monsterKilled = true;
@@ -3180,8 +3353,10 @@ void shootTimer(int val) {
 				if (cbulletxP > cMonsterX - 4.5 && cbulletxP < cMonsterX + 4.5 && cbulletzP >= cMonsterZ - 2 && cbulletzP <= cMonsterZ + 2 && oneDamagePerShotP) {
 					collideMP = true;
 					oneDamagePerShotP = false;
-					if (monsterHealth - 2 != 0)
+					if (monsterHealth - 2 != 0) {
 						monsterHealth -= 2;
+						GameScore += 20;
+					}
 					else {
 						fight = false;
 						monsterKilled = true;
@@ -3213,6 +3388,7 @@ void shootTimer(int val) {
 			}
 
 			if (cWarriorX >= cCoinX - 2 && cWarriorX <= cCoinX + 2) {
+				GameScore += 5;
 				coinCollected = true;
 				coinLanded = false;
 				powerShot = true;
@@ -3225,8 +3401,24 @@ void shootTimer(int val) {
 				coinCollected = false;
 			}
 		}
-		printf("timeTillCoinLands: %i, cCoinX: %i", timeTillCoinLands, cCoinX);
+		//printf("timeTillCoinLands: %i, cCoinX: %i", timeTillCoinLands, cCoinX);
 }
+	if (cWarriorX >= finalTargetX - 3 && cWarriorX <= finalTargetX + 3 && cWarriorZ >= finalTargetZ - 3 && cWarriorZ <= finalTargetZ + 3) {
+		Won = true;
+		fight = false;
+		level1 = false;
+		level2 = false;
+	}
+
+	printf("lives: %i", lives);
+
+	if (lives <= 0) {
+		Lost = true;
+		fight = false;
+		level1 = false;
+		level2 = false;
+	}
+
 	glutPostRedisplay();
 	glutTimerFunc(1, shootTimer, 0);
 }
@@ -3297,7 +3489,7 @@ void monsterShotGetCloser(int val) {
 
 			if (cbulletMx <= cWarriorXT + 1 && cbulletMx >= cWarriorXT - 1 && cbulletMz <= cWarriorZT + 1 && cbulletMz >= cWarriorZT - 1) {
 				MonsterShoot = false;
-				if (cbulletMx <= cWarriorX + 2 && cbulletMx >= cWarriorX - 2 && cbulletMz <= cWarriorZ + 2 && cbulletMz >= cWarriorZ - 2) {
+				if (cbulletMx <= cWarriorX + 3 && cbulletMx >= cWarriorX - 3 && cbulletMz <= cWarriorZ + 3 && cbulletMz >= cWarriorZ - 3) {
 					// warrior damaged
 					lives--;
 				}
@@ -3743,14 +3935,12 @@ void fireObstaclesMove(int value) {
 	rotateCoin+=10;
 	rotateFinalTarget += 10;
 
-
 	glutPostRedisplay();
 	glutTimerFunc(50, fireObstaclesMove, 0);
 }
 
 
-void LoadAssets()
-{
+void LoadAssets(){
 	// Loading Model files
 	model_home.Load("Models/home2/skull.3ds");
 	model_player.Load("Models/player/player.3DS");
@@ -3766,6 +3956,8 @@ void LoadAssets()
 	// Loading texture files
 	tex_ground.Load("Textures/ground.bmp");
 	tex_wall.Load("Textures/wall2.bmp");
+	tex_win.Load("Textures/win.bmp");
+	tex_lose.Load("Textures/lose.bmp");
 	//tex_rock.Load("Textures/rock.bmp");
 	loadBMP(&tex, "Textures/blu-sky-3.bmp", true);
 	loadBMP(&tex3, "Textures/fireBall.bmp", true);
