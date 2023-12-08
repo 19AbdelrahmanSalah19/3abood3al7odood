@@ -1,3 +1,5 @@
+//#include <GLFW/glfw3.h>//
+#include <cmath>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -450,6 +452,7 @@ GLTexture tex_ground2;
 GLTexture tex_wall;
 GLTexture tex_wall2;
 GLTexture tex_win;
+GLTexture tex_win2;
 GLTexture tex_lose;
 GLTexture tex_three;
 GLTexture tex_two;
@@ -1303,6 +1306,119 @@ void drawHealth() {
 
 }
 
+//struct Light {
+//	Vector3f  position;
+//	Vector3f  direction;
+//	float cutOff;
+//};
+
+void drawSpotlight() {
+	
+
+	//// Set the spotlight position
+	//GLfloat lightPosition[] = { x, y, z, 1.0f };
+	//glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
+	//// Set the spotlight direction (pointing downwards)
+	//GLfloat spotDirection[] = { 0.0f, -1.0f, 0.0f };
+	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDirection);
+
+	//// Set the spotlight cutoff angle
+	//glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, cutoffAngle);
+
+	//// Enable attenuation for realistic spotlight falloff
+	//glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0);
+	//glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.05);
+	//glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.01);
+
+	//// Set the cutoff angle to create a circular spotlight
+	//glEnable(GL_COLOR_MATERIAL);
+	//glColorMaterial(GL_FRONT, GL_DIFFUSE);
+
+	//// Draw a cone to represent the spotlight
+	//glPushMatrix();
+	//glTranslatef(x, y, z);
+	//glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	//glutSolidCone(5.0, 5.0, 50, 50);  // Adjust cone dimensions as needed
+	//glPopMatrix();
+
+	//// Disable lighting after rendering the spotlight
+	//glDisable(GL_LIGHTING);
+	//glDisable(GL_LIGHT0);
+
+
+
+	/*GLfloat l0Diffuse[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	GLfloat l0Spec[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+	GLfloat l0Ambient[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+	GLfloat l0Position[] = { 10.0f, 0.0f, 0.0f, false };
+	GLfloat l0Direction[] = { -1.0, 0.0, 0.0 };
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Diffuse);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, l0Ambient);
+	glLightfv(GL_LIGHT0, GL_POSITION, l0Position);
+	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30.0);
+	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 90.0);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, l0Direction);*/
+
+	//glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHT1);
+
+	/*GLfloat lmodel_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+	GLfloat l1Diffuse[] = { 0.0f, 1.0f, 0.0f, 1.0f };
+	GLfloat l1Ambient[] = { 0.0f, 0.1f, 0.0f, 1.0f };
+	GLfloat l1Position[] = { cWarriorX, cWarriorY + 10, cWarriorZ, true };
+	GLfloat l1Direction[] = { 0.0, -1.0, 0.0 };
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Diffuse);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, l1Ambient);
+	glLightfv(GL_LIGHT1, GL_POSITION, l1Position);
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
+	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 90.0);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, l1Direction);*/
+
+
+	GLfloat lmodel_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+
+	// Set up material properties for the warrior shape
+	GLfloat warriorAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat warriorDiffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+	GLfloat warriorSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat warriorShininess = 95.0f;
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, warriorAmbient);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, warriorDiffuse);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, warriorSpecular);
+	glMaterialf(GL_FRONT, GL_SHININESS, warriorShininess);
+
+	GLfloat l1Diffuse[] = { 0.0f, 1.0f, 0.0f, 1.0f };
+	GLfloat l1Ambient[] = { 0.0f, 0.1f, 0.0f, 1.0f };
+	GLfloat l1Position[] = { cWarriorX-10, cWarriorY, cWarriorZ, 1.0f };
+	GLfloat l1Direction[] = { 0.0, -1.0, 0.0 };
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT1);
+
+	// Set up spotlight properties
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Diffuse);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, l1Ambient);
+	glLightfv(GL_LIGHT1, GL_POSITION, l1Position);
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
+	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 90.0);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, l1Direction);
+
+	/*GLfloat l2Diffuse[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	GLfloat l2Ambient[] = { 0.0f, 0.0f, 0.1f, 1.0f };
+	GLfloat l2Position[] = { 0.0f, 0.0f, 10.0f, false };
+	GLfloat l2Direction[] = { 0.0, 0.0, -1.0 };
+	glLightfv(GL_LIGHT2, GL_DIFFUSE, l2Diffuse);
+	glLightfv(GL_LIGHT2, GL_AMBIENT, l2Ambient);
+	glLightfv(GL_LIGHT2, GL_POSITION, l2Position);
+	glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, 60.0);
+	glLightf(GL_LIGHT2, GL_SPOT_EXPONENT, 90.0);
+	glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, l2Direction);*/
+}
+
 void myDisplay(void)
 {
 	setupCamera();
@@ -1310,18 +1426,86 @@ void myDisplay(void)
 
 
 
-	GLfloat lightPosition[] = { -140.0f, 0.0f, 140.0f, 0.0f };
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+	//GLfloat lightPosition[] = { -140.0f, 0.0f, 140.0f, 0.0f };
+	//glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
 	//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
 	// Draw Ground
 
 	if (level1) {
-		/*GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
-		glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);*/
-		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+		//drawSpotlight();
 
+		//GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
+		//glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+		//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+		//GLfloat lightIntensity[] = { 0.2f, 0.2f, 0.2f, 1.0f };  // Adjust ambient light intensity
+		//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+		//GLfloat spotLightPosition[] = { 10.0f, 20.0f, -10.0f, 1.0f };  // Position of the spotlight above and to the left of (10, 0, -10)
+		//GLfloat spotLightDirection[] = { 0.0f, -1.0f, 0.0f };           // Direction of the spotlight (pointing downwards)
+
+		//// Enable GL_LIGHT1 for the spotlight
+		//glEnable(GL_LIGHT1);
+
+		//// Set up spotlight properties
+		//glLightfv(GL_LIGHT1, GL_POSITION, spotLightPosition);
+		//glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotLightDirection);
+		//glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0f);  // Adjust cutoff angle as needed
+		//glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 2.0f);
+
+		//// Enable attenuation for realistic spotlight falloff
+		//glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0);
+		//glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.05);
+		//glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.01);
+
+		//GLfloat spotlightMaterial[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		//glMaterialfv(GL_LIGHT1, GL_EMISSION, spotlightMaterial);
+
+		//// Set the cutoff angle to create a circular spotlight
+		//glEnable(GL_LIGHTING);
+		//glColor3f(1.0, 1.0, 1.0); // Set color to white
+
+			//// Draw a cone to represent the spotlight
+		//glPushMatrix();
+		//glTranslatef(10.0f, 20.0f, -10.0f);
+		//glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+		//glutSolidCone(5.0, 5.0, 50, 50); // Cone representing the spotlight
+		//glPopMatrix();
+
+		//// Disable GL_LIGHT1 after rendering the spotlight
+		//glDisable(GL_LIGHT1);
+
+		//GLfloat lightAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+		//glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+
+		//glEnable(GL_LIGHTING);
+		//glEnable(GL_LIGHT1);
+
+		//
+
+		//GLfloat spotLightPosition[] = { 10.0f, 30.0f, -10.0f, 1.0f };
+		//GLfloat spotLightDirection[] = { 0.0f, -1.0f, 0.0f };
+		//GLfloat lightAmbient2[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+		//GLfloat spotlightMaterial[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		//glLightfv(GL_LIGHT1, GL_POSITION, spotLightPosition);
+		//glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotLightDirection);
+		//glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0f);
+		//glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 2.0f);
+		//glLightfv(GL_LIGHT1, GL_EMISSION, spotlightMaterial);
+		//glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient2);
+
+		//glPushMatrix();
+		//glTranslatef(10.0f, 30.0f, -10.0f);
+		//glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+		//glutSolidCone(5.0, 5.0, 50, 50); // Cone representing the spotlight
+		//glPopMatrix();
+
+		//glDisable(GL_LIGHTING);
+		//glDisable(GL_LIGHT1);
+
+		//drawSpotlight(10.0,20.0,-10.0,45);
+
+	
 		
 		
 
@@ -1513,6 +1697,41 @@ void myDisplay(void)
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);*/
 		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity2);
 
+		if (fight) {
+			GLfloat spotLightPosition[] = { cMonsterX, cMonsterY, cMonsterZ, 1.0f };
+			GLfloat spotLightDirection[] = { 0.0f, 0.0f, -1.0f }; // Pointing towards negative Z
+			GLfloat spotLightCutoff = 45.0f; // Spotlight cutoff angle in degrees
+			GLfloat spotLightExponent = 2.0f; // Spotlight exponent
+
+			// Enable GL_LIGHT1
+			glEnable(GL_LIGHT1);
+
+			// Set up spotlight properties
+			glLightfv(GL_LIGHT1, GL_POSITION, spotLightPosition);
+			glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotLightDirection);
+			glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, spotLightCutoff);
+			glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, spotLightExponent);
+
+			// Enable attenuation for realistic spotlight falloff
+			glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0);
+			glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.05);
+			glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.01);
+
+			// Set the cutoff angle to create a circular spotlight
+			glEnable(GL_LIGHTING);
+			glColor3f(1.0, 1.0, 1.0); // Set color to white
+
+			//// Draw a cone to represent the spotlight
+			//glPushMatrix();
+			//glTranslatef(cMonsterX, cMonsterY, cMonsterZ);
+			//glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+			//glutSolidCone(5.0, 5.0, 50, 50); // Cone representing the spotlight
+			//glPopMatrix();
+
+			// Disable GL_LIGHT1 after rendering the spotlight
+			glDisable(GL_LIGHT1);
+
+		}
 		
 
 		RenderGround2();
@@ -1696,11 +1915,14 @@ void myDisplay(void)
 	}
 
 	else if (Won) {
+
+		glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+		glPushMatrix();
 		glDisable(GL_LIGHTING);	// Disable lighting 
 
 		glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
 
-		glBindTexture(GL_TEXTURE_2D, tex_win.texture[0]);	
+		glBindTexture(GL_TEXTURE_2D, tex_win2.texture[0]);	
 
 		if (frontView) {
 			glPushMatrix();
@@ -1772,10 +1994,12 @@ void myDisplay(void)
 		}
 
 		glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
-		glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+		glPopMatrix();
 
+
+		glColor3f(1.0, 0.5, 0.0); // Set material color to orange
+		//glColor3f(0, 1, 0); // Set material color to orange
 		glPushMatrix();
-		glColor3f(1.0, 1.0, 1.0);
 		glTranslatef(cGunX, cGunY, cGunZ);
 		glRotatef(rotateGun, 0, 1, 0);
 		if (firstPersonShooter)
@@ -1790,6 +2014,7 @@ void myDisplay(void)
 			}
 			std::string score = "SCORE : " + std::to_string(GameScore) + " PERFECT!";
 			for (char c : score) {
+				glColor3f(1, 0.5, 0); // Set material color to orange
 				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
 			}
 		}
@@ -1797,15 +2022,18 @@ void myDisplay(void)
 		{
 			std::string score = "SCORE : " + std::to_string(GameScore);
 			for (char c : score) {
+				glColor3f(1, 0.5, 0); // Set material color to orange
 				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
 			}
 		}
-
 		glPopMatrix();
 	}
 
 	else if (Lost) {
-		//glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+
+		
+	
+		glColor3f(1, 1, 1);
 		glPushMatrix();
 		glDisable(GL_LIGHTING);	// Disable lighting 
 
@@ -1886,11 +2114,11 @@ void myDisplay(void)
 		}
 		
 		glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
-		glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+		//glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
 		glPopMatrix();
 
-		glPushMatrix();
 		glColor3f(1, 1, 1);
+		glPushMatrix();
 		glTranslatef(cGunX, cGunY, cGunZ);
 		glRotatef(rotateGun, 0, 1, 0);
 		if (firstPersonShooter)
@@ -1905,6 +2133,7 @@ void myDisplay(void)
 			}
 			std::string score = "SCORE : " + std::to_string(GameScore) + " PERFECT!";
 			for (char c : score) {
+				glColor3f(1, 1, 1);
 				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
 			}
 		}
@@ -1912,6 +2141,7 @@ void myDisplay(void)
 		{
 			std::string score = "SCORE : " + std::to_string(GameScore);
 			for (char c : score) {
+				glColor3f(1, 1, 1);
 				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
 			}
 		}
@@ -3647,10 +3877,13 @@ void shootTimer(int val) {
 				if (monsterHealth - 1 > 0) {
 					monsterHealth--;
 					GameScore += 10;
+					SoundEngine->play2D("audio/monsterHurt.mp3", false);
+
 				}
 				else {
 					monsterHealth = 0;
 					monsterDie = true;
+					SoundEngine->play2D("audio/monsterDie.mp3", false);
 					/*fight = false;
 					monsterKilled = true;*/
 				}
@@ -3712,10 +3945,12 @@ void shootTimer(int val) {
 					if (monsterHealth - 2 > 0) {
 						monsterHealth -= 2;
 						GameScore += 20;
+						SoundEngine->play2D("audio/monsterHurt.mp3", false);
 					}
 					else {
 						monsterHealth = 0;
 						monsterDie = true;
+						SoundEngine->play2D("audio/monsterDie.mp3", false);
 						/*fight = false;
 						monsterKilled = true;*/
 					}
@@ -3751,6 +3986,7 @@ void shootTimer(int val) {
 				coinLanded = false;
 				powerShot = true;
 				timeTillCoinLands = 500;
+				SoundEngine->play2D("audio/collecting.mp3", false);
 			}
 		}
 		else {
@@ -3761,20 +3997,22 @@ void shootTimer(int val) {
 		}
 		//printf("timeTillCoinLands: %i, cCoinX: %i", timeTillCoinLands, cCoinX);
 }
-	if (cWarriorX >= finalTargetX - 3 && cWarriorX <= finalTargetX + 3 && cWarriorZ >= finalTargetZ - 3 && cWarriorZ <= finalTargetZ + 3) {
+	if (cWarriorX >= finalTargetX - 3 && cWarriorX <= finalTargetX + 3 && cWarriorZ >= finalTargetZ - 3 && cWarriorZ <= finalTargetZ + 3 && !Won) {
 		Won = true;
 		fight = false;
 		level1 = false;
 		level2 = false;
+		SoundEngine->play2D("audio/win.mp3", false);
 	}
 
 	//printf("lives: %i", lives);
 
-	if (lives <= 0) {
+	if (lives <= 0 && !Lost) {
 		Lost = true;
 		fight = false;
 		level1 = false;
 		level2 = false;
+		SoundEngine->play2D("audio/lose.mp3", false);
 	}
 
 	glutPostRedisplay();
@@ -3850,6 +4088,7 @@ void monsterShotGetCloser(int val) {
 				if (cbulletMx <= cWarriorX + 3 && cbulletMx >= cWarriorX - 3 && cbulletMz <= cWarriorZ + 3 && cbulletMz >= cWarriorZ - 3) {
 					// warrior damaged
 					lives--;
+					SoundEngine->play2D("audio/collided.mp3", false);
 				}
 			}
 			/*else {
@@ -4115,6 +4354,7 @@ void zombieGetCloser(int val) {
 			fight = false;
 			monsterKilled = true;
 			monsterDie = false;
+			SoundEngine->play2D("audio/woohoo.mp3", false);
 		}		
 	}
 	printf("  monsterHealth: %i", monsterHealth);
@@ -4351,6 +4591,7 @@ void LoadAssets(){
 	tex_wall.Load("Textures/wall2.bmp");
 	tex_wall2.Load("Textures/wall3.bmp");
 	tex_win.Load("Textures/win.bmp");
+	tex_win2.Load("Textures/win2.bmp");
 	tex_lose.Load("Textures/lose.bmp");
 	tex_three.Load("Textures/three.bmp");
 	tex_two.Load("Textures/two.bmp");
@@ -4416,6 +4657,8 @@ void main(int argc, char** argv)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHT2);
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_COLOR_MATERIAL);
 
