@@ -1,5 +1,19 @@
 ﻿  OpenGLMeshLoader.cpp
 D:\Abdelrahman\3DGame\3abood3al7odood\TextureBuilder.h(27,52): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
 D:\Abdelrahman\3DGame\3abood3al7odood\TextureBuilder.h(28,52): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(520,70): warning C4838: conversion from 'bool' to 'GLfloat' requires a narrowing conversion
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(1382,53): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4568,7): warning C4101: 'timerFromIncX': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4531,7): warning C4101: 'zombieDied': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4573,8): warning C4101: 'warriorColor': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4569,7): warning C4101: 'timerFromDecZ': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4571,6): warning C4101: 'whichRock': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4552,7): warning C4101: 'damageSoundOnlyOnce': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4530,7): warning C4101: 'zombiefirstShot': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4570,7): warning C4101: 'timerFromIncZ': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4565,7): warning C4101: 'awayFromX': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4522,7): warning C4101: 'collide': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4523,7): warning C4101: 'collideP': unreferenced local variable
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(4567,7): warning C4101: 'timerFromDecX': unreferenced local variable
 GLTexture.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   OpenGLMeshLoader.vcxproj -> D:\Abdelrahman\3DGame\3abood3al7odood\Debug\OpenGLMeshLoader19.exe
