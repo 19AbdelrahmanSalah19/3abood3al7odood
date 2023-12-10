@@ -314,57 +314,21 @@ public:
 		Vector3f right = up.cross(center - eye).unit();
 		eye = eye + right * d;
 		center = center + right * d;
-		/*if (eye.x > 8 || eye.x < 0 || eye.y > 8 || eye.y < 0 || eye.z > 8 || eye.z < 0) {
-			eye = eye - right * d;
-		}
-		else
-			center = center + right * d;*/
+	
 	}
-	/*void frontView() {
-		eye = Vector3f(8.0, 1.0, 4.0);
-		center = Vector3f(0.0, 0.5, 4.0);
-		up = Vector3f(0.0, 0.5, 0.0);
-		TView = false;
-		SView = false;
-		FView = true;
-	}
-
-	void sideView() {
-		eye = Vector3f(4.0, 1.0, 7.8);
-		center = Vector3f(4.0, 0.5, 0.0);
-		up = Vector3f(0.0, 0.5, 0.0);
-		TView = false;
-		SView = true;
-		FView = false;
-	}
-	void topView() {
-		eye = Vector3f(4.0, 7.8, 4.0);
-		center = Vector3f(4.0, 0.0, 4.0);
-		up = Vector3f(0.0, 0.0, -1.0);
-		TView = true;
-		SView = false;
-		FView = false;
-	}*/
+	
 
 	void moveY(float d) {
 		eye = eye + up.unit() * d;
 		center = center + up.unit() * d;
-		/*if (eye.x > 8 || eye.x < 0 || eye.y > 8 || eye.y < 0 || eye.z > 8 || eye.z < 0) {
-			eye = eye - up.unit() * d;
-		}
-		else
-			center = center + up.unit() * d;*/
+		
 	}
 
 	void moveZ(float d) {
 		Vector3f view = (center - eye).unit();
 		eye = eye + view * d;
 		center = center + view * d;
-		/*if (eye.x > 8 || eye.x < 0 || eye.y > 8 || eye.y < 0 || eye.z > 8 || eye.z < 0) {
-			eye = eye - view * d;
-		}
-		else
-			center = center + view * d;*/
+	
 	}
 
 	void rotateX(float a) {
@@ -382,9 +346,6 @@ public:
 		Vector3f right = up.cross(view).unit();
 		view = view * cos(DEG2RAD(a)) + right * sin(DEG2RAD(a));
 		right = view.cross(up);
-		/*eye.x = cGunX - 1;
-		eye.y = cGunY + 0.5;
-		eye.z = cGunZ - 2;*/	
 		if (firstPersonShooter) {
 			if (frontView) {
 				eye.x = cGunX - 1;
@@ -512,7 +473,8 @@ void InitLightSource()
 		//GLfloat l0Diffuse[] = { 242.0 / 255.0, 235.0 / 255.0, 104.0 / 255.0, 0.0 }; // Increase diffuse intensity
 		//GLfloat l0Specular[] = { 0.2, 0.2, 0.2, 0.0 }; // Increase specular intensity
 		//GLfloat spot_direction[] = { 0.0, -2.0, 1 };
-		
+		GLfloat lightIntensity2[] = { 0.7, 0.7, 0.7, 1.0f };
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity2);
 		GLfloat l0Diffuse[] = { 0.7f, 0.7f, 0.7f, 1.0f };
 		GLfloat l0Spec[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 		GLfloat l0Ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
@@ -530,14 +492,9 @@ void InitLightSource()
 		glEnable(GL_LIGHT0);
 		GLfloat diffuse[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-
-		// Define Light source 0 Specular light
 		GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-
-		// Finally, define light source 0 position in World Space
 		GLfloat light_position[] = { -140.0f, 10.0f, 140.0f, 1.0f };
-		//GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	}
 
@@ -1542,17 +1499,6 @@ void myDisplay(void)
 			glPopMatrix();
 		}
 
-
-
-		/*glPushMatrix();
-		glTranslatef(4, 1, 0);
-		glRotatef(90, 1, 0, 0);
-		glScalef(1, 1, 1);
-		model_fruit.Draw();
-		glPopMatrix();*/
-
-		
-
 		glPushMatrix();
 		glColor3d(0.5, 0.5, 0.5);
 		glTranslatef(20, 4.5, -33);
@@ -1647,8 +1593,6 @@ void myDisplay(void)
 		gluSphere(qobj, 97.5, 1000, 1000);
 		glPopMatrix();
 
-		
-
 		glPushMatrix();
 		glTranslatef(cGunX, cGunY, cGunZ);
 		glRotatef(rotateGun - angleX, 0, 1, 0);
@@ -1662,18 +1606,14 @@ void myDisplay(void)
 			glTranslatef(0, 0, monsterBulletZ);
 			drawMonsterShot();
 			glPopMatrix();
-		}
 
-		if (fight) {
 			glPushMatrix();
 			glTranslatef(cGunXTP, cGunYTP, cGunZTP);
 			glRotatef(rotateGunTP - angleXTP, 0, 1, 0);
 			glRotatef(25, 1, 0, 0);
 			drawPower();
 			glPopMatrix();
-		}
-
-		if (fight) {
+		
 			glPushMatrix();
 			glTranslatef(cGunXT, cGunYT, cGunZT);
 			glRotatef(rotateGunT - angleXT, 0, 1, 0);
@@ -2260,6 +2200,14 @@ void myDisplay(void)
 	glutSwapBuffers();
 }
 
+bool warriorCollidesWithWall() {
+	if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+		return true;
+	}
+	else
+		return false;
+}
+
 //=======================================================================
 // Keyboard Function
 //=======================================================================
@@ -2269,12 +2217,7 @@ void myKeyboard(unsigned char button, int x, int y)
 		float d = 0.5;
 		switch (button)
 		{
-		/*case 't':
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			break;
-		case 'r':
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			break;*/
+	
 		case 'k':
 			if (powerShot) {
 				shootP = true;
@@ -2294,11 +2237,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunZ += 0.5;
-							cWarriorZ += 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided) {
 						camera.moveZ(d);
@@ -2344,11 +2282,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunX -= 0.5;
-							cWarriorX -= 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided) {
 						camera.moveZ(d);
@@ -2369,11 +2302,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunX += 0.5;
-							cWarriorX += 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided)
 						camera.moveZ(d);
@@ -2395,11 +2323,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
-							cGunZ -= 0.5;
-							cWarriorZ -= 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided)
 						camera.moveZ(-d);
@@ -2418,11 +2341,7 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunZ += 0.5;
-							cWarriorZ += 0.5;
-							break;
-						}*/
+
 					}
 					if (!rockCollided)
 						camera.moveZ(-d);
@@ -2441,11 +2360,7 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunX += 0.5;
-							cWarriorX += 0.5;
-							break;
-						}*/
+
 					}
 					if (!rockCollided)
 						camera.moveZ(-d);
@@ -2465,11 +2380,7 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunX -= 0.5;
-							cWarriorX -= 0.5;
-							break;
-						}*/
+		
 					}
 					if (!rockCollided)
 						camera.moveZ(-d);
@@ -2491,11 +2402,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunX += 0.5;
-							cWarriorX += 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided)
 						camera.moveX(d);
@@ -2514,11 +2420,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunX -= 0.5;
-							cWarriorX -= 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided)
 						camera.moveX(d);
@@ -2537,11 +2438,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunZ += 0.5;
-							cWarriorZ += 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided)
 						camera.moveX(d);
@@ -2561,11 +2457,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
-							cGunZ -= 0.5;
-							cWarriorZ -= 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided)
 						camera.moveX(d);
@@ -2587,11 +2478,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 1 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunX -= 0.5;
-							cWarriorX -= 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided)
 						camera.moveX(-d);
@@ -2610,11 +2496,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 1 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunZ -= 0.5;
-							cWarriorZ -= 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided)
 						camera.moveX(-d);
@@ -2633,11 +2514,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
-							cGunZ -= 0.5;
-							cWarriorZ -= 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided)
 						camera.moveX(-d);
@@ -2656,11 +2532,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 1 && cWarriorZ < cRockZ[i] + 0.5) {
-							cGunZ += 0.5;
-							cWarriorZ += 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided)
 						camera.moveX(-d);
@@ -2669,37 +2540,6 @@ void myKeyboard(unsigned char button, int x, int y)
 				}
 			}
 			break;
-
-		/*case 'q':
-			camera.moveY(d);
-			break;
-		case 'e':
-			camera.moveY(-d);
-			break;*/
-		/*case 'c':
-			if (firstPersonShooter) {
-				camera.moveZ(-5);
-				firstPersonShooter = false;
-				thirdPersonShooter = true;
-				player = true;;
-			}
-			else if (thirdPersonShooter) {
-				camera.moveZ(5);
-				firstPersonShooter = true;
-				thirdPersonShooter = false;
-				player = false;
-			}
-			break;*/
-			/*case 'n':
-				camera.sideView();
-				break;
-			case 'm':
-				camera.topView();
-				break;*/
-				/*case 'k':
-					printf("Hello");
-					shoot = true;
-					break;*/
 		case 27:
 			exit(0);
 			break;
@@ -2717,7 +2557,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			if (frontView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX>-157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1  && cWarriorX>4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX <-13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ<-68) || (cWarriorZ>141)) {
+				if(warriorCollidesWithWall()){
 					cGunZ += 0.5;
 					cWarriorZ += 0.5;
 					}
@@ -2729,7 +2569,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (backView) {
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ -= 0.5;
 					cWarriorZ -= 0.5;
 				}
@@ -2739,17 +2579,17 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (rightView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX -= 0.5;
 					cWarriorX -= 0.5;
 				}
 				else
-					camera.moveZ(d);				//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
+					camera.moveZ(d);				
 			}
 			else if (leftView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX += 0.5;
 					cWarriorX += 0.5;
 				}
@@ -2762,7 +2602,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			if (frontView) {
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ -= 0.5;
 					cWarriorZ -= 0.5;
 				}
@@ -2772,7 +2612,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (backView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ += 0.5;
 					cWarriorZ += 0.5;
 				}
@@ -2782,7 +2622,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (rightView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX += 0.5;
 					cWarriorX += 0.5;
 				}
@@ -2792,7 +2632,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (leftView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX -= 0.5;
 					cWarriorX -= 0.5;
 				}
@@ -2805,7 +2645,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			if (frontView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX += 0.5;
 					cWarriorX += 0.5;
 				}
@@ -2815,7 +2655,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (backView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX -= 0.5;
 					cWarriorX -= 0.5;
 				}
@@ -2825,7 +2665,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (rightView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ += 0.5;
 					cWarriorZ += 0.5;
 				}
@@ -2835,7 +2675,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (leftView) {
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ -= 0.5;
 					cWarriorZ -= 0.5;
 				}
@@ -2848,7 +2688,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			if (frontView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX -= 0.5;
 					cWarriorX -= 0.5;
 				}
@@ -2858,7 +2698,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (backView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX += 0.5;
 					cWarriorX += 0.5;
 				}
@@ -2868,7 +2708,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (rightView) {
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ -= 0.5;
 					cWarriorZ -= 0.5;
 				}
@@ -2878,7 +2718,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (leftView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ += 0.5;
 					cWarriorZ += 0.5;
 				}
@@ -2886,30 +2726,6 @@ void myKeyboard(unsigned char button, int x, int y)
 					camera.moveX(-d);
 			}
 			break;
-		/*case 'c':
-			if (firstPersonShooter) {
-				camera.moveZ(-5);
-				firstPersonShooter = false;
-				thirdPersonShooter = true;
-				player = true;;
-			}
-			else if (thirdPersonShooter) {
-				camera.moveZ(5);
-				firstPersonShooter = true;
-				thirdPersonShooter = false;
-				player = false;
-			}
-			break;*/
-			/*case 'n':
-				camera.sideView();
-				break;
-			case 'm':
-				camera.topView();
-				break;*/
-				/*case 'k':
-					printf("Hello");
-					shoot = true;
-					break;*/
 		case 27:
 			exit(0);
 			break;
@@ -2933,7 +2749,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			if (frontView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX += 0.5;
 					cWarriorX += 0.5;
 				}
@@ -2943,7 +2759,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (backView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX -= 0.5;
 					cWarriorX -= 0.5;
 				}
@@ -2953,7 +2769,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (rightView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ += 0.5;
 					cWarriorZ += 0.5;
 				}
@@ -2963,7 +2779,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (leftView) {
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ -= 0.5;
 					cWarriorZ -= 0.5;
 				}
@@ -2976,7 +2792,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			if (frontView) {
 				cGunX += 0.5;
 				cWarriorX += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX -= 0.5;
 					cWarriorX -= 0.5;
 				}
@@ -2986,7 +2802,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (backView) {
 				cGunX -= 0.5;
 				cWarriorX -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunX += 0.5;
 					cWarriorX += 0.5;
 				}
@@ -2996,7 +2812,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (rightView) {
 				cGunZ += 0.5;
 				cWarriorZ += 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ -= 0.5;
 					cWarriorZ -= 0.5;
 				}
@@ -3006,7 +2822,7 @@ void myKeyboard(unsigned char button, int x, int y)
 			else if (leftView) {
 				cGunZ -= 0.5;
 				cWarriorZ -= 0.5;
-				if ((cWarriorX > -127 && cWarriorZ > 48) || (cWarriorX < -153 && cWarriorZ>18) || (cWarriorZ < 22 && cWarriorZ>0 && cWarriorX > -157 && cWarriorX < -13) || (cWarriorZ > 48 && cWarriorX < 123 && cWarriorX > 13) || (cWarriorX > 13 && cWarriorZ < 49 && cWarriorZ>-1) || (cWarriorX < -13 && cWarriorZ < 21 && cWarriorZ > -1) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX<-4 && cWarriorX>-14) || (cWarriorZ < 1 && cWarriorZ>-1 && cWarriorX > 4 && cWarriorX < 14) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > -52 && cWarriorX < -17) || (cWarriorZ < 2 && cWarriorZ>-1 && cWarriorX > 13 && cWarriorX < 52) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX > 48) || (cWarriorZ < 1 && cWarriorZ>-52 && cWarriorX < -48) || (cWarriorZ < -48 && cWarriorX < -13) || (cWarriorZ < -48 && cWarriorX > 13) || (cWarriorZ < -68) || (cWarriorZ > 141)) {
+				if (warriorCollidesWithWall()) {
 					cGunZ += 0.5;
 					cWarriorZ += 0.5;
 				}
@@ -3014,30 +2830,6 @@ void myKeyboard(unsigned char button, int x, int y)
 					camera.moveX(-d);
 			}
 			break;
-		/*case 'c':
-			if (firstPersonShooter) {
-				camera.moveZ(-5);
-				firstPersonShooter = false;
-				thirdPersonShooter = true;
-				player = true;
-			}
-			else if (thirdPersonShooter) {
-				camera.moveZ(5);
-				firstPersonShooter = true;
-				thirdPersonShooter = false;
-				player = false;
-			}
-			break;*/
-			/*case 'n':
-				camera.sideView();
-				break;
-			case 'm':
-				camera.topView();
-				break;*/
-				/*case 'k':
-					printf("Hello");
-					shoot = true;
-					break;*/
 		case 27:
 			exit(0);
 			break;
@@ -3056,21 +2848,8 @@ void passM(int x, int y)//passive motion function takes 2 parameters the x and y
 
 	// Calculate the change in mouse position
 	int deltaX = x - passX;
-
-
 	// Update the rotation angle
 	angleX = (angleX + (deltaX * sensitivity))/* - 0.80007*/;
-	//printf(" angle: %f" ,  angleX );
-	
-
-	// Ensure the angle stays within bounds (optional)
-	/*if (angleX > 360.0) {
-		angleX -= 360.0;
-	}
-	else if (angleX < 0.0) {
-		angleX += 360.0;
-	}*/
-
 	// Update the stored mouse position
 	passX = x;
 
@@ -3082,28 +2861,6 @@ void Special(int key, int x, int y) {
 	//float a = 2.0;
 	if (level1) {
 		switch (key) {
-			/*case GLUT_KEY_UP:
-				fV = true;
-				rV = false;
-				lV = false;
-				bV = false;
-			if (rightView) {
-					camera.rotateY(90);
-					rotateGun += 90;
-				}
-				else if (backView) {
-					camera.rotateY(180);
-					rotateGun += 180;
-				}
-				else if (leftView) {
-					camera.rotateY(-90);
-					rotateGun -= 90;
-				}
-				frontView = true;
-				leftView = false;
-				rightView = false;
-				backView = false;
-				break;*/
 		case GLUT_KEY_DOWN:
 			//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
 			if (frontView) {
@@ -3122,22 +2879,6 @@ void Special(int key, int x, int y) {
 				rightView = true;
 				leftView = false;
 			}
-			//if (backView) {
-			//	camera.rotateY(-90); // rotate to your right
-			//	rotateGun -= 90;
-			//}
-			//else if (frontView) {
-			//	camera.rotateY(180);
-			//	rotateGun += 180;
-			//}
-			//else if (leftView) {
-			//	camera.rotateY(90); // rotate to your left
-			//	rotateGun += 90;
-			//}
-			//frontView = false;
-			//leftView = false;
-			//rightView = false;
-			//backView = true;
 			camera.rotateY(180);
 			rotateGun += 180;
 			if (cWarriorZ > 30 || cWarriorZ < -40 || cWarriorX > 50 || cWarriorX < -34) {
@@ -3182,10 +2923,6 @@ void Special(int key, int x, int y) {
 					rotateGun += 180;
 				}
 			}
-			/*cosThet = cos((rotateGun) * PI / 180.0);
-			sinThet = sin((rotateGun) * PI / 180.0);
-			cWarriorX = cWarriorX * cosThet + cWarriorZ * sinThet;
-			cWarriorX = -cWarriorX * sinThet + cWarriorZ * cosThet;*/
 			break;
 		case GLUT_KEY_LEFT:
 			//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
@@ -3250,10 +2987,6 @@ void Special(int key, int x, int y) {
 					rotateGun -= 90;
 				}
 			}
-			/*cosThet = cos((rotateGun) * PI / 180.0);
-			sinThet = sin((rotateGun) * PI / 180.0);
-			cWarriorX = cWarriorX * cosThet + cWarriorZ * sinThet;
-			cWarriorX = -cWarriorX * sinThet + cWarriorZ * cosThet;*/
 			break;
 		case GLUT_KEY_RIGHT:
 			//printf("cgunx: %f, cgunz: %f   __  cWarx: %f, cWarz: %f   __", cGunX, cGunZ, cWarriorX, cWarriorZ);
@@ -3318,10 +3051,6 @@ void Special(int key, int x, int y) {
 					rotateGun += 90;
 				}
 			}
-			/*cosThet = cos((rotateGun) * PI / 180.0);
-			sinThet = sin((rotateGun) * PI / 180.0);
-			cWarriorX = cWarriorX * cosThet + cWarriorZ * sinThet;
-			cWarriorX = -cWarriorX * sinThet + cWarriorZ * cosThet;*/
 			break;
 		}
 	}
@@ -3462,31 +3191,7 @@ void Special(int key, int x, int y) {
 //=======================================================================
 // Motion Function
 //=======================================================================
-void myMotion(int x, int y)
-{
-	//y = HEIGHT - y;
-
-	//if (cameraZoom - y > 0)
-	//{
-	//	Eye.x += -0.1;
-	//	Eye.z += -0.1;
-	//}
-	//else
-	//{
-	//	Eye.x += 0.1;
-	//	Eye.z += 0.1;
-	//}
-
-	//cameraZoom = y;
-
-	//glLoadIdentity();	//Clear Model_View Matrix
-
-	//gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);	//Setup Camera with modified paramters
-
-	//GLfloat light_position[] = { 0.0f, 10.0f, 0.0f, 1.0f };
-	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
-	//glutPostRedisplay();	//Re-draw scene 
+void myMotion(int x, int y){
 }
 
 //=======================================================================
@@ -3950,15 +3655,6 @@ void monsterShotGetCloser(int val) {
 			cbulletMy = 0.0;
 			cbulletMz = 0.0;
 			monsterBulletZ += 1;
-			//shootTime -= 1;
-			/*if (putShotInTemp) {
-				rotateGunT = rotateGun;
-				angleXT = angleX;
-				cGunXT = cGunX;
-				cGunYT = cGunY;
-				cGunZT = cGunZ;
-				putShotInTemp = false;
-			}*/
 			if (putMShotInTemp) {
 				cWarriorXT = cWarriorX;
 				cWarriorZT = cWarriorZ;
@@ -3986,22 +3682,6 @@ void monsterShotGetCloser(int val) {
 					SoundEngine->play2D("audio/collided.mp3", false);
 				}
 			}
-			/*else {
-
-				if (cMonsterShotX < cWarriorXT) {
-					cMonsterShotX += 1;
-				}
-				else if (cMonsterShotX > cWarriorXT) {
-					cMonsterShotX -= 1;
-				}
-				if (cMonsterShotZ < cWarriorZT) {
-					cMonsterShotZ += 1;
-				}
-				else if (cMonsterShotZ > cWarriorZT) {
-					cMonsterShotZ -= 1;
-				}*/
-				//printf("  cbMX: %f , cbMZ: %f , cWXT: %f, cWZT: %f", cbulletMx, cbulletMz, cWarriorXT, cWarriorZT);
-			//}
 		}
 	}
 	glutPostRedisplay();
@@ -4505,187 +4185,6 @@ void LoadAssets(){
 
 }
 
-void restartGame() {
-	angleX = 0.0;
-	angleXT = 0.0;
-	angleXTP = 0.0;
-
-	passX = 600;
-
-	WIDTH = 2280;
-	HEIGHT = 1720;
-	FView = true;
-	SView = false;
-	TView = false;
-	shoot = false;
-	shootTime = 25;
-	bulletZ = 0.0;
-	cbulletx = 0.0;
-	cbullety = 0.0;
-	cbulletz = 0.0;
-	cbulletMx = 0.0;
-	cbulletMy = 0.0;
-	cbulletMz = 0.0;
-	shootP = false;
-	shootTimeP = 100;
-	bulletZP = 0.0;
-	cbulletxP = 0.0;
-	cbulletyP = 0.0;
-	cbulletzP = 0.0;
-	cWarriorX = 8.0;
-	cWarriorY = 0.0;
-	cWarriorZ = 22.0;
-	cGunX = 10.0;
-	cGunY = 4.0;
-	cGunZ = 20.0;
-	cGunXT = 10.0;
-	cGunYT = 4.0;
-	cGunZT = 20.0;
-	cGunXTP = 10.0;
-	cGunYTP = 4.0;
-	cGunZTP = 20.0;
-	float cRockXT[6] = {-5.0, 11.0, 40.0, 22.0, -15.0, -8.0};
-	 float cRockY[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
-	 float cRockZ[6] = { 0.0,-10,-21,-14,-5,-26 };
-	 float cZombieX[6] = { 14.0,5.0,-6.0,28.0,-20.0,18.0 };
-	 float cZombieY[6] = { 4.0,4.0,4.0,4.0,4.0,4.0 };
-	 float cZombieZ[6] = { 0.0,-5.0,-30.0,-25.0,-4,-17.0 };
-	float cZombieRotateY[6] = { 0.0,0.0,0.0,0.0,0.0,0.0 };
-	bool collide[6];
-	bool collideP[6];
-	 collideM = false;
-	 collideMP = false;
-	 shot = false;
-	 shotP = false;
-	 shotAngle = 0.0;
-	 shotAngleT = 0.0;
-	bool zombiefirstShot[6];
-	bool zombieDied[6];
-	 frontView = true;
-	 rightView = false;
-	 leftView = false;
-	 backView = false;
-	 rotateGun = 0.0;
-	 rotateGunT = 0.0;
-	 rotateGunTP = 0.0;
-	 oneZombiePerShot = false;
-	 oneZombiePerShotP = false;
-	 fV, rV, lV, bV;
-	 bullet = true;
-	 bulletP = false;
-	 rotatePlayer = 0.0;
-	 firstPersonShooter = true;
-	 thirdPersonShooter = false;
-	 player = false;
-	 ex = 9.0;
-	 ey = 4.5;
-	 ez = 22.0;
-	 GameScore = 0;
-	bool damageSoundOnlyOnce[6];
-	 shootSound = false;
-	 alamy = false;
-	 cosThet = 0.0;
-	 sinThet = 0.0;
-	 rockCollided = false;
-	 ZombieCollidesRock = false;
-	 bulletCollidesRock = false;
-	 bulletCollidesRockP = false;
-	 lives = 8;
-	bool health[8] = { true,true,true,true,true,true,true,true };
-	float healthX[8] = { 20,50,80,110,140,170,200,230 };
-	float healthY[8] = { 0,0,0,0,0,0,0,0 };
-	bool awayFromX[6];
-	awayFromY = false;
-	bool timerFromDecX[6];
-	bool timerFromIncX[6];
-	bool timerFromDecZ[6];
-	bool timerFromIncZ[6];
-	int whichRock[6];
-	float zombiePunchRotateAngle[6]={ 0.0,0.0,0.0,0.0,0.0,0.0 };
-	float warriorColor[6];
-	int timerPunch[6] = { 2,2,2,2,2,2 };
-	 counterForPowerShot = 0;
-	 powerShot = false;
-	GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
-	GLfloat lightIntensity2[] = { 0.7, 0.7, 0.7, 1.0f };
-	 level1 = true;
-	 level2 = false;
-	float fireObstaclesX[4] = { -145,-135,-100,-60 };
-	float fireObstaclesY[4] = { 2,2,2,2 };
-	float fireObstaclesZ[4] = { 110, 70,30,40 };
-	 incrementOb1 = true;
-	 incrementOb2 = false;
-	 incrementOb3 = true;
-	 incrementOb4 = false;
-	 fight = false;
-	 start = true;
-	 monsterHealth = 15;
-	float monsterX[15] = { 1.05,0.9,0.75,0.6,0.45,0.3,0.15,0.0,-0.15,-0.3,-0.45,-0.6,-0.75,-0.9,-1.05 };
-	 cMonsterX = 0.0;
-	 cMonsterY = 20.0;
-	 cMonsterZ = -35.0;
-	 cMonsterXT = 0.0;
-	 cMonsterYT = 20.0;
-	 cMonsterZT = -35.0;
-	 putShotInTemp = true;
-	 oneDamagePerShot = true;
-	 monsterKilled = false;
-	 cMonsterShotX = 0.0;
-	 cMonsterShotY = 5.0;
-	 cMonsterShotZ = -35.0;
-	 MonsterShoot = false;
-	 putMShotInTemp = true;
-	 cWarriorXT = 8.0;
-	 cWarriorYT = 0.0;
-	 cWarriorZT = 22.0;
-	 monsterShotAngle = 0.0;
-	 monsterRotateAngle = 0.0;
-	 float zombieRotateAngle[6] = { 0.0,0.0,0.0,0.0,0.0,0.0 };
-	 monsterBulletZ = 0.0;
-	 rotateCoin = 0.0;
-	 coinLanded = false;
-	 putShotInTempP = true;
-	 oneDamagePerShotP = true;
-	 timeTillCoinLands = 0;
-	 rotateFinalTarget = 0.0;
-	 finalTargetX = 0.0;
-	 finalTargetY = 4.5;
-	 finalTargetZ = -65;
-	 monsterDieAngle = 0.0;
-	 monsterDieRotate = 0.0;
-	 loseVariable = 0.0;
-	 monsterDie = false;
-	 Won = false;
-	 Lost = false;
-	 countDown = 4;
-	 inBetweenLevels = false;
-	 cCoinX = 0;
-	 cCoinY = 4;
-	 cCoinZ = 0;
-	 coinCollected = false;
-	//char title[] = "3D Model Loader Sample";
-
-	// 3D Projection Options
-	 fovy = 45.0;
-	 aspectRatio = (GLdouble)WIDTH / (GLdouble)HEIGHT;
-	 zNear = 0.1;
-	 zFar = 100;
-	 rotateSkull = 0;
-	 rotatefireBall = 0;
-
-
-	 //9,4.5,22 eye
-	//9,4.5,10 center
-	 camera.eye.x = 9;
-	 camera.eye.y = 4.5;
-	 camera.eye.z = 22;
-
-	 camera.center.x = 9;
-	 camera.center.y = 4.5;
-	 camera.center.z = 10;
-
-}
-
 
 //=======================================================================
 // Main Function
@@ -4730,10 +4229,6 @@ void main(int argc, char** argv)
 	
 	glutTimerFunc(0, fireObstaclesMove, 0);
 
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
-	//glEnable(GL_LIGHT1);
-	//glEnable(GL_LIGHT2);
 	LoadAssets();
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_NORMALIZE);
