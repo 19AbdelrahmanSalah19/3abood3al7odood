@@ -1,7 +1,7 @@
 ﻿  OpenGLMeshLoader.cpp
 D:\Abdelrahman\3DGame\3abood3al7odood\TextureBuilder.h(27,52): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
 D:\Abdelrahman\3DGame\3abood3al7odood\TextureBuilder.h(28,52): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(481,70): warning C4838: conversion from 'bool' to 'GLfloat' requires a narrowing conversion
-D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(1347,53): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(441,70): warning C4838: conversion from 'bool' to 'GLfloat' requires a narrowing conversion
+D:\Abdelrahman\3DGame\3abood3al7odood\OpenGLMeshLoader.cpp(1271,53): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 GLTexture.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   OpenGLMeshLoader.vcxproj -> D:\Abdelrahman\3DGame\3abood3al7odood\Debug\OpenGLMeshLoader19.exe

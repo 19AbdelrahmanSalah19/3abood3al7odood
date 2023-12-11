@@ -49,25 +49,34 @@ using namespace std;
 
 ISoundEngine* SoundEngine = createIrrKlangDevice();
 
-
 #define DEG2RAD(a) (a * 0.0174532925)
 #define GLUT_KEY_ESCAPE 27
 #define PI 3.141592653589793238462643383279502884
 
-
-float angleX = 0.0; 
-float angleXT = 0.0;
-float angleXTP = 0.0;
-
+int GameScore = 0;
 int passX = 600;
-double flicker = 1;
 int WIDTH = 2280;
 int HEIGHT = 1720;
-bool FView = true;
-bool SView = false;
-bool TView = false;
-bool shoot = false;
 int shootTime = 25;
+int shootTimeP = 100;
+int lives = 8;
+int whichRock[6];
+int timerPunch[6] = { 2,2,2,2,2,2 };
+int counterForPowerShot = 0;
+int rotateSkull = 0;
+int rotatefireBall = 0;
+int cCoinX = 0;
+int cCoinY = 4;
+int cCoinZ = 0;
+int monsterHealth = 15;
+int timeTillCoinLands = 0;
+int countDown = 4;
+
+double flicker = 1;
+
+float angleX = 0.0;
+float angleXT = 0.0;
+float angleXTP = 0.0;
 float bulletZ = 0.0;
 float cbulletx = 0.0;
 float cbullety = 0.0;
@@ -75,8 +84,6 @@ float cbulletz = 0.0;
 float cbulletMx = 0.0;
 float cbulletMy = 0.0;
 float cbulletMz = 0.0;
-bool shootP = false;
-int shootTimeP = 100;
 float bulletZP = 0.0;
 float cbulletxP = 0.0;
 float cbulletyP = 0.0;
@@ -100,103 +107,42 @@ float cZombieX[6] = { 14.0,5.0,-6.0,28.0,-20.0,18.0};
 float cZombieY[6] = { 4.0,4.0,4.0,4.0,4.0,4.0 };
 float cZombieZ[6] = { 0.0,-5.0,-30.0,-25.0,-4,-17.0};
 float cZombieRotateY[6] = { 0.0,0.0,0.0,0.0,0.0,0.0 };
-bool collide[6];
-bool collideP[6];
-bool collideM = false;
-bool collideMP = false;
-bool shot = false;
-bool shotP = false;
 float shotAngle = 0.0;
 float shotAngleT = 0.0;
-bool zombiefirstShot[6];
-bool zombieDied[6];
-bool frontView = true;
-bool rightView = false;
-bool leftView = false;
-bool backView = false;
 float rotateGun = 0.0;
 float rotateGunT = 0.0;
 float rotateGunTP = 0.0;
-bool oneZombiePerShot = false;
-bool oneZombiePerShotP = false;
-bool fV, rV, lV, bV;
-bool bullet = true;
-bool bulletP = false;
 float rotatePlayer = 0.0;
-bool firstPersonShooter = true;
-bool thirdPersonShooter = false;
-bool player = false;
 float ex = 9.0;
 float ey = 4.5;
 float ez = 22.0;
-int GameScore = 0;
-bool damageSoundOnlyOnce[6];
-bool shootSound;
-bool alamy;
 float cosThet = 0.0;
 float sinThet = 0.0;
-bool rockCollided;
-bool ZombieCollidesRock;
-bool bulletCollidesRock;
-bool bulletCollidesRockP;
-int lives = 8;
-bool health[8] = { true,true,true,true,true,true,true,true };
 float healthX[8] = { 20,50,80,110,140,170,200,230 };
-//float healthX[8] = { -120,-90,-60,-30,0,30,60,90 };
 float healthY[8] = { 0,0,0,0,0,0,0,0 };
-bool awayFromX[6];
-bool awayFromY = false;
-bool timerFromDecX[6];
-bool timerFromIncX[6];
-bool timerFromDecZ[6];
-bool timerFromIncZ[6];
-int whichRock[6];
 float zombiePunchRotateAngle[6] = { 0.0,0.0,0.0,0.0,0.0,0.0 };
 float warriorColor[6];
-int timerPunch[6] = { 2,2,2,2,2,2 };
-int counterForPowerShot = 0;
-bool powerShot = false;
-GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
-GLfloat lightIntensity2[] = { 0.7, 0.7, 0.7, 1.0f };
-bool level1 = true;
-bool level2 = false;
 float fireObstaclesX[4] = { -145,-135,-100,-60 };
 float fireObstaclesY[4] = { 2,2,2,2 };
 float fireObstaclesZ[4] = { 110, 70,30,40 };
-bool incrementOb1 = true;
-bool incrementOb2 = false;
-bool incrementOb3 = true;
-bool incrementOb4 = false;
-bool fight = false;
-bool start = true;
-int monsterHealth = 15;
-float monsterX[15] = { 1.05,0.9,0.75,0.6,0.45,0.3,0.15,0.0,-0.15,-0.3,-0.45,-0.6,-0.75,-0.9,-1.05};
+float monsterX[15] = { 1.05,0.9,0.75,0.6,0.45,0.3,0.15,0.0,-0.15,-0.3,-0.45,-0.6,-0.75,-0.9,-1.05 };
 float cMonsterX = 0.0;
 float cMonsterY = 20.0;
 float cMonsterZ = -35.0;
 float cMonsterXT = 0.0;
 float cMonsterYT = 20.0;
 float cMonsterZT = -35.0;
-bool putShotInTemp = true;
-bool oneDamagePerShot = true;
-bool monsterKilled = false;
 float cMonsterShotX = 0.0;
 float cMonsterShotY = 5.0;
 float cMonsterShotZ = -35.0;
-bool MonsterShoot = false;
-bool putMShotInTemp = true;
 float cWarriorXT = 8.0;
 float cWarriorYT = 0.0;
 float cWarriorZT = 22.0;
 float monsterShotAngle = 0.0;
 float monsterRotateAngle = 0.0;
-float zombieRotateAngle[6] = { 0.0,0.0,0.0,0.0,0.0,0.0};
+float zombieRotateAngle[6] = { 0.0,0.0,0.0,0.0,0.0,0.0 };
 float monsterBulletZ = 0.0;
 float rotateCoin = 0.0;
-bool coinLanded = false;
-bool putShotInTempP = true;
-bool oneDamagePerShotP = true;
-int timeTillCoinLands = 0;
 float rotateFinalTarget = 0.0;
 float finalTargetX = 0.0;
 float finalTargetY = 4.5;
@@ -204,26 +150,79 @@ float finalTargetZ = -65;
 float monsterDieAngle = 0.0;
 float monsterDieRotate = 0.0;
 float loseVariable = 0.0;
+
+bool shootP = false;
+bool FView = true;
+bool SView = false;
+bool TView = false;
+bool shoot = false;
+bool collide[6];
+bool collideP[6];
+bool collideM = false;
+bool collideMP = false;
+bool shot = false;
+bool shotP = false;
+bool zombiefirstShot[6];
+bool zombieDied[6];
+bool frontView = true;
+bool rightView = false;
+bool leftView = false;
+bool backView = false;
+bool oneZombiePerShot = false;
+bool oneZombiePerShotP = false;
+bool fV, rV, lV, bV;
+bool bullet = true;
+bool bulletP = false;
+bool firstPersonShooter = true;
+bool thirdPersonShooter = false;
+bool player = false;
+bool damageSoundOnlyOnce[6];
+bool shootSound;
+bool alamy;
+bool rockCollided;
+bool ZombieCollidesRock;
+bool bulletCollidesRock;
+bool bulletCollidesRockP;
+bool health[8] = { true,true,true,true,true,true,true,true };
+bool awayFromX[6];
+bool awayFromY = false;
+bool timerFromDecX[6];
+bool timerFromIncX[6];
+bool timerFromDecZ[6];
+bool timerFromIncZ[6];
+bool powerShot = false;
+bool level1 = true;
+bool level2 = false;
+bool incrementOb1 = true;
+bool incrementOb2 = false;
+bool incrementOb3 = true;
+bool incrementOb4 = false;
+bool fight = false;
+bool start = true;
+bool putShotInTemp = true;
+bool oneDamagePerShot = true;
+bool monsterKilled = false;
+bool MonsterShoot = false;
+bool putMShotInTemp = true;
+bool coinLanded = false;
+bool putShotInTempP = true;
+bool oneDamagePerShotP = true;
 bool monsterDie = false;
 bool Won = false;
 bool Lost = false;
-int countDown = 4;
 bool inBetweenLevels = false;
+bool coinCollected = false;
+
 char title[] = "3D Model Loader Sample";
+
+GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
+GLfloat lightIntensity2[] = { 0.7, 0.7, 0.7, 1.0f };
 
 // 3D Projection Options
 GLdouble fovy = 45.0;
 GLdouble aspectRatio = (GLdouble)WIDTH / (GLdouble)HEIGHT;
 GLdouble zNear = 0.1;
 GLdouble zFar = 100;
-int rotateSkull = 0;
-int rotatefireBall = 0;
-
-int cCoinX = 0;
-int cCoinY = 4;
-int cCoinZ = 0;
-
-bool coinCollected = false;
 
 GLuint tex;
 GLuint tex3;
@@ -234,28 +233,6 @@ GLuint tex2;
 
 
 
-
-//float ex = 0.0;
-
-
-
-//class Vector
-//{
-//public:
-//	GLdouble x, y, z;
-//	Vector() {}
-//	Vector(GLdouble _x, GLdouble _y, GLdouble _z) : x(_x), y(_y), z(_z) {}
-//	//================================================================================================//
-//	// Operator Overloading; In C++ you can override the behavior of operators for you class objects. //
-//	// Here we are overloading the += operator to add a given value to all vector coordinates.        //
-//	//================================================================================================//
-//	void operator +=(float value)
-//	{
-//		x += value;
-//		y += value;
-//		z += value;
-//	}
-//};
 
 class Vector3f {
 public:
@@ -294,9 +271,7 @@ public:
 	}
 };
 
-//Vector Eye(20, 5, 20);
-//Vector At(0, 0, 0);
-//Vector Up(0, 1, 0);
+
 
 class Camera {
 public:
@@ -429,14 +404,6 @@ Model_3DS model_player;
 Model_3DS model_Gun;
 Model_3DS model_zombie;
 Model_3DS model_coin;
-//Model_3DS model_rock;
-//Model_3DS model_fruit;
-//Model_3DS model_target;
-
-
-
-
-
 
 // Textures
 GLTexture tex_ground;
@@ -452,27 +419,20 @@ GLTexture tex_two;
 GLTexture tex_one;
 GLTexture tex_rock;
 
-
 //=======================================================================
 // Lighting Configuration Function
 //=======================================================================
 void InitLightSource()
 {
-	// Enable Lighting for this OpenGL Program
 	glEnable(GL_LIGHTING);
 	GLfloat lmodel_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 
-	// Enable Light Source number 0
 	
 	if (level2) {
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
 		bool s = true;
-		//GLfloat l0Ambient[] = { 0.1, 0.1, 0.1, 0.0 };
-		//GLfloat l0Diffuse[] = { 242.0 / 255.0, 235.0 / 255.0, 104.0 / 255.0, 0.0 }; // Increase diffuse intensity
-		//GLfloat l0Specular[] = { 0.2, 0.2, 0.2, 0.0 }; // Increase specular intensity
-		//GLfloat spot_direction[] = { 0.0, -2.0, 1 };
 		GLfloat lightIntensity2[] = { 0.7, 0.7, 0.7, 1.0f };
 		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity2);
 		GLfloat l0Diffuse[] = { 0.7f, 0.7f, 0.7f, 1.0f };
@@ -480,7 +440,6 @@ void InitLightSource()
 		GLfloat l0Ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
 		GLfloat l0Position[] = { camera.eye.x, camera.eye.y, camera.eye.z, s };
 		GLfloat l0Direction[] = { (camera.center - camera.eye).x, (camera.center - camera.eye).y,(camera.center - camera.eye).z };
-		//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Diffuse);
 		glLightfv(GL_LIGHT0, GL_POSITION, l0Position);
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, l0Direction);
@@ -1043,32 +1002,6 @@ void RenderWall2()
 
 
 
-//void RenderRock()
-//{
-//	glDisable(GL_LIGHTING);	// Disable lighting 
-//
-//	glColor3f(0.6, 0.6, 0.6);	// Dim the ground texture a bit
-//
-//	glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
-//
-//	glBindTexture(GL_TEXTURE_2D, tex_rock.texture[0]);	
-//
-//	glPushMatrix();
-//	glTranslatef(4, 1, 0);
-//	glRotatef(90, 1, 0, 0);
-//	glScalef(3, 3, 3);
-//	model_rock.Draw();
-//	glPopMatrix();
-//
-//	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
-//
-//	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
-//}
-
-//=======================================================================
-// Display Function
-//=======================================================================
-
 
 void drawPlayer() {
 
@@ -1109,6 +1042,7 @@ void drawBullet() {
 
 void drawPower() {
 	if (bulletP) {
+		glColor3f(1, 1, 1);
 		glPushMatrix();
 		GLUquadricObj* qobj;
 		qobj = gluNewQuadric();
@@ -1126,7 +1060,7 @@ void drawPower() {
 
 void drawGun() {
 
-	glColor3d(0.5, 0.5, 0.5);
+	glColor3f(0.5, 0.5, 0.5);
 	if (level1 || fight) {
 		if (!fight) {
 			if (bulletP) {
@@ -1135,7 +1069,7 @@ void drawGun() {
 				glTranslatef(-2, 0.5, bulletZP + 1);
 				glutSolidSphere(0.5, 20, 20);
 				glPopMatrix();*/
-
+				glColor3f(1, 1, 1);
 				glPushMatrix();
 				GLUquadricObj* qobj;
 				qobj = gluNewQuadric();
@@ -1149,6 +1083,7 @@ void drawGun() {
 			}
 		}
 
+		glColor3f(0.5, 0.5, 0.5);
 		glPushMatrix();
 		//glTranslatef(10, 4, 10);
 		glRotatef(shotAngle, 1, 0, 0);
@@ -1327,20 +1262,9 @@ void drawHealth() {
 
 }
 
-//struct Light {
-//	Vector3f  position;
-//	Vector3f  direction;
-//	float cutOff;
-//};
 
 void drawSpotlight() {
 	
-		
-		
-		//GLfloat lDiffuse[] = { 1.0f, 0.0f, 0.0f, 0.0f };
-		//Set the light intensity to white (1.0, 1.0, 1.0, 1.0)
-		//GLfloat l1intensity[] = { 1.0f, 0.0f, 0.0f, 0.0f };
-
 		GLfloat lDirection[] = { 0, -1,0 };
 		GLfloat lDiffuse[] = { 0.0f, 1.0f, 0.0f, 1.0f };
 		GLfloat l1intensity[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -1351,7 +1275,6 @@ void drawSpotlight() {
 		glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 60.0);
 		glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 90.0);
 		glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lDirection);
-
 		glDisable(GL_TEXTURE_2D);
 	
 }
@@ -1361,12 +1284,6 @@ void myDisplay(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	setupCamera();
 
-
-	//GLfloat lightPosition[] = { -140.0f, 0.0f, 140.0f, 0.0f };
-	//glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
-	// Draw Ground
 
 	if (level1) {
 		InitLightSource();
@@ -1391,18 +1308,6 @@ void myDisplay(void)
 		gluSphere(qobj, 97.5, 1000, 1000);
 		glPopMatrix();
 
-		/*glPushMatrix();
-		glTranslated(-9, 2, 4);
-		glRotated(rotatefireBall, 0, 1, 0);
-		glBindTexture(GL_TEXTURE_2D, tex3);
-		gluQuadricTexture(qobj, true);
-		gluQuadricNormals(qobj, GL_SMOOTH);
-		gluSphere(qobj, 2, 100, 100);
-		glPopMatrix();*/
-
-
-
-		//Rock
 		for (int i = 0;i < 6;i++) {
 			glPushMatrix();
 			glTranslated(cRockX[i], cRockY[i], cRockZ[i]);
@@ -1422,29 +1327,9 @@ void myDisplay(void)
 			glPopMatrix();
 		}
 
-
-		/*glPushMatrix();
-		glTranslatef(15, 4, 0);
-		glRotatef(90, 1, 0, 0);
-		glScalef(0.1, 0.1, 0.1);
-		model_target.Draw();
-		glPopMatrix();*/
-
-		/*glPushMatrix();
-		glTranslatef(4, 1, 0);
-		glRotatef(90, 1, 0, 0);
-		glScalef(0.1, 0.1, 0.1);
-		model_rock.Draw();
-		glPopMatrix();*/
 		for (int i = 0;i < 6; i++) {
 			if (!zombieDied[i]) {
 				glPushMatrix();
-				/*if (collide[i])
-					glColor3d(1, 0, 0);*/
-					/*glTranslatef(10, 4, 0);
-					glRotatef(90, 1, 0, 0);
-					glScalef(0.09, 0.09, 0.09);*/
-					//model_zombie.Draw(i);
 				glTranslatef(cZombieX[i], cZombieY[i], cZombieZ[i]);
 				glRotated(zombiePunchRotateAngle[i], 1, 0, 0);
 				glRotated(zombieRotateAngle[i], 0, 1, 0);
@@ -1520,6 +1405,7 @@ void myDisplay(void)
 		glPopMatrix();
 
 		glPushMatrix();
+		glColor3f(1, 0, 0);
 		glTranslatef(cGunX, cGunY, cGunZ);
 		glRotatef(rotateGun, 0, 1, 0);
 		if (firstPersonShooter)
@@ -1536,10 +1422,7 @@ void myDisplay(void)
 		InitMaterial();
 		drawSpotlight();
 		
-		
-
 		RenderGround2();
-
 		RenderWall2();
 
 		glPushMatrix();
@@ -1681,7 +1564,6 @@ void myDisplay(void)
 
 		if (fight) {
 			glPushMatrix();
-			//glRotated(zombiePunchRotateAngle[i], 1, 0, 0);
 			if (!monsterDie) {
 				glTranslatef(cMonsterX, cMonsterY, cMonsterZ);
 				glRotated(monsterRotateAngle, 0, 1, 0);
@@ -1724,9 +1606,7 @@ void myDisplay(void)
 		}
 		glPopMatrix();
 
-		
-		//glDisable(GL_LIGHTING);  // Disable lighting when not needed
-	}
+		}
 
 	else if (Won) {
 
@@ -1927,8 +1807,7 @@ void myDisplay(void)
 			glPopMatrix();
 		}
 		
-		glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
-		//glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+		glEnable(GL_LIGHTING);	
 		glPopMatrix();
 
 		glColor3f(1, 1, 1);
@@ -1966,8 +1845,8 @@ void myDisplay(void)
 	else if (inBetweenLevels) {
 
 		if (countDown == 3) {
-			glDisable(GL_LIGHTING);	// Disable lighting 
-			glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
+			glDisable(GL_LIGHTING);	 
+			glEnable(GL_TEXTURE_2D);	
 			glBindTexture(GL_TEXTURE_2D, tex_three.texture[0]);
 			if (frontView) {
 				glPushMatrix();
@@ -2037,13 +1916,13 @@ void myDisplay(void)
 				glEnd();
 				glPopMatrix();
 			}
-			glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
-			glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+			glEnable(GL_LIGHTING);	
+			glColor3f(1, 1, 1);	
 		}
 
 		else if (countDown == 2) {
-			glDisable(GL_LIGHTING);	// Disable lighting 
-			glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
+			glDisable(GL_LIGHTING);	 
+			glEnable(GL_TEXTURE_2D);	
 			glBindTexture(GL_TEXTURE_2D, tex_two.texture[0]);
 			if (frontView) {
 				glPushMatrix();
@@ -2113,13 +1992,13 @@ void myDisplay(void)
 				glEnd();
 				glPopMatrix();
 			}
-			glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
-			glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+			glEnable(GL_LIGHTING);	
+			glColor3f(1, 1, 1);	
 		}
 
 		else if (countDown == 1) {
-			glDisable(GL_LIGHTING);	// Disable lighting 
-			glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
+			glDisable(GL_LIGHTING);	 
+			glEnable(GL_TEXTURE_2D);	
 			glBindTexture(GL_TEXTURE_2D, tex_one.texture[0]);
 			if (frontView) {
 				glPushMatrix();
@@ -2189,8 +2068,8 @@ void myDisplay(void)
 				glEnd();
 				glPopMatrix();
 			}
-			glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
-			glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
+			glEnable(GL_LIGHTING);	
+			glColor3f(1, 1, 1);	
 		}
 
 	}
@@ -2220,6 +2099,7 @@ void myKeyboard(unsigned char button, int x, int y)
 	
 		case 'k':
 			if (powerShot) {
+				SoundEngine->play2D("audio/PowerShot.mp3", false);
 				shootP = true;
 				bulletP = true;
 			}
@@ -2258,11 +2138,6 @@ void myKeyboard(unsigned char button, int x, int y)
 							rockCollided = true;
 							break;
 						}
-						/*if (cWarriorX > cZombieX[i] - 0.5 && cWarriorX < cRockX[i] + 0.5 && cWarriorZ > cRockZ[i] - 0.5 && cWarriorZ < cRockZ[i] + 1) {
-							cGunZ -= 0.5;
-							cWarriorZ -= 0.5;
-							break;
-						}*/
 					}
 					if (!rockCollided) {
 						camera.moveZ(d);
@@ -2740,6 +2615,7 @@ void myKeyboard(unsigned char button, int x, int y)
 		{
 		case 'k':
 			if (powerShot) {
+				SoundEngine->play2D("audio/PowerShot.mp3", false);
 				shootP = true;
 				bulletP = true;
 			}
@@ -2841,9 +2717,7 @@ void myKeyboard(unsigned char button, int x, int y)
 	glutPostRedisplay();
 }
 
-void passM(int x, int y)//passive motion function takes 2 parameters the x and y positions of the mouse
-//it allows the user to make use of the mouse motion without clicking on the mouse buttons
-{
+void passM(int x, int y){
 	float sensitivity = 0.1; // Adjust sensitivity as needed
 
 	// Calculate the change in mouse position
@@ -3276,9 +3150,9 @@ void shootTimer(int val) {
 			float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
 			float sinTheta = sin((rotateGun - angleX) * PI / 180.0);
 
-			cbulletx = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */((bulletZ - 1) * sinTheta) + cGunX;
+			cbulletx = ((bulletZ - 1) * sinTheta) + cGunX;
 			cbullety = cbullety + 0.5 + cGunY;
-			cbulletz = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ ((bulletZ - 1) * cosTheta) + cGunZ;
+			cbulletz = ((bulletZ - 1) * cosTheta) + cGunZ;
 			//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
 			for (int i = 0;i < 6;i++) {
 				if (cbulletx >= cRockX[i] - 3 && cbulletx <= cRockX[i] + 3 && cbulletz >= cRockZ[i] - 3 && cbulletz <= cRockZ[i] + 3) {
@@ -3330,25 +3204,20 @@ void shootTimer(int val) {
 
 		if (powerShot) {
 			if (shootP && shootTimeP > 0) {
-				/*if (!shootSound) {
-					SoundEngine->play2D("audio/gunShot.mp3", false);
-					shootSound = true;
-				}*/
 				cbulletxP = 0.0;
 				cbulletyP = 0.0;
 				cbulletzP = 0.0;
 				bulletZP -= 2;
 				shootTimeP -= 1;
-				//cbulletz -= 1;
 				if (shootTimeP == 99)
 					shotP = true;
 
 				float cosTheta = cos((rotateGun - angleX) * PI / 180.0);
 				float sinTheta = sin((rotateGun - angleX) * PI / 180.0);
 
-				cbulletxP = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(-2 * cosTheta) + ((bulletZP + 1) * sinTheta) + cGunX;
+				cbulletxP = (-2 * cosTheta) + ((bulletZP + 1) * sinTheta) + cGunX;
 				cbulletyP = cbulletyP + 0.5 + cGunY;
-				cbulletzP = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZ;
+				cbulletzP = (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZ;
 				//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
 				for (int i = 0;i < 6;i++) {
 					if (cbulletxP >= cRockX[i] - 3 && cbulletxP <= cRockX[i] + 3 && cbulletzP >= cRockZ[i] - 3 && cbulletzP <= cRockZ[i] + 3) {
@@ -3395,9 +3264,6 @@ void shootTimer(int val) {
 			level1 = false;
 			inBetweenLevels = true;
 			SoundEngine->play2D("audio/3-2-1-go.mp3", false);
-			//level2 = true;
-
-
 
 			if (backView) {
 				frontView = true;
@@ -3465,9 +3331,9 @@ void shootTimer(int val) {
 			float cosTheta = cos((rotateGunT - angleXT) * PI / 180.0);
 			float sinTheta = sin((rotateGunT - angleXT) * PI / 180.0);
 
-			cbulletx = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */((bulletZ - 1) * sinTheta) + cGunXT;
+			cbulletx = ((bulletZ - 1) * sinTheta) + cGunXT;
 			cbullety = cbullety + 0.5 + cGunYT;
-			cbulletz = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ ((bulletZ - 1) * cosTheta) + cGunZT;
+			cbulletz = ((bulletZ - 1) * cosTheta) + cGunZT;
 			//printf("  cXT: %f , cYT: %f , cZT: %f, rotateGT: %f, angleXT: %f,putShotInTemp: %d, oneDPShot: %d", cGunXT, cGunYT, cGunZT, rotateGunT, angleXT, putShotInTemp, oneDamagePerShot);
 			if (cbulletx > cMonsterX - 4.5 && cbulletx < cMonsterX + 4.5 && cbulletz >= cMonsterZ - 2 && cbulletz <= cMonsterZ + 2 && oneDamagePerShot) {
 				collideM = true;
@@ -3483,8 +3349,6 @@ void shootTimer(int val) {
 					monsterHealth = 0;
 					monsterDie = true;
 					SoundEngine->play2D("audio/monsterDie.mp3", false);
-					/*fight = false;
-					monsterKilled = true;*/
 				}
 			}
 		}
@@ -3509,10 +3373,6 @@ void shootTimer(int val) {
 
 		if (powerShot) {
 			if (shootP && shootTimeP > 0) {
-				/*if (!shootSound) {
-					SoundEngine->play2D("audio/gunShot.mp3", false);
-					shootSound = true;
-				}*/
 				cbulletxP = 0.0;
 				cbulletyP = 0.0;
 				cbulletzP = 0.0;
@@ -3533,9 +3393,9 @@ void shootTimer(int val) {
 				float cosTheta = cos((rotateGunTP - angleXTP) * PI / 180.0);
 				float sinTheta = sin((rotateGunTP - angleXTP) * PI / 180.0);
 
-				cbulletxP = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(-2 * cosTheta) + ((bulletZP + 1) * sinTheta) + cGunXTP;
+				cbulletxP = (-2 * cosTheta) + ((bulletZP + 1) * sinTheta) + cGunXTP;
 				cbulletyP = cbulletyP + 0.5 + cGunYTP;
-				cbulletzP = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZTP;
+				cbulletzP =  (2 * sinTheta) + ((bulletZP + 1) * cosTheta) + cGunZTP;
 				//printf("  cX: %f , cY: %f , cZ: %f, bullet: %f, angle: %f, cGunZ %f", cbulletx, cbullety, cbulletz, bulletZ, -angleX, cGunZ);
 				//printf("  cXT: %f , cYT: %f , cZT: %f, rotateGT: %f, angleXT: %f,putShotInTempP: %d", cGunXT, cGunYT, cGunZT, rotateGunT, angleXT, putShotInTempP);
 				if (cbulletxP > cMonsterX - 4.5 && cbulletxP < cMonsterX + 4.5 && cbulletzP >= cMonsterZ - 2 && cbulletzP <= cMonsterZ + 2 && oneDamagePerShotP) {
@@ -3551,8 +3411,6 @@ void shootTimer(int val) {
 						monsterHealth = 0;
 						monsterDie = true;
 						SoundEngine->play2D("audio/monsterDie.mp3", false);
-						/*fight = false;
-						monsterKilled = true;*/
 					}
 				}
 				if (shootTimeP == 100) {
@@ -3643,9 +3501,6 @@ void monsterShotGetCloser(int val) {
 	if (level2 && fight && !monsterDie) {
 		if (!MonsterShoot) {
 			MonsterShoot = true;
-			/*cMonsterShotX = cMonsterX;
-			cMonsterShotY = 5.0;
-			cMonsterShotZ = cMonsterZ;*/
 			putMShotInTemp = true;
 			monsterBulletZ = 0.0;
 		}
@@ -3669,9 +3524,9 @@ void monsterShotGetCloser(int val) {
 			float cosTheta = cos((monsterShotAngle) * PI / 180.0);
 			float sinTheta = sin((monsterShotAngle) * PI / 180.0);
 
-			cbulletMx = /*cbulletx * cos(-angleX) + cbulletz * sin(-angleX) + */(monsterBulletZ * sinTheta) + cMonsterXT;
+			cbulletMx = (monsterBulletZ * sinTheta) + cMonsterXT;
 			cbulletMy = 4.5;
-			cbulletMz = /*-cbulletx * sin(-angleX) + cbulletz * cos(-angleX) +*/ (monsterBulletZ * cosTheta) + cMonsterZT;
+			cbulletMz = (monsterBulletZ * cosTheta) + cMonsterZT;
 			
 
 			if (cbulletMx <= cWarriorXT + 1 && cbulletMx >= cWarriorXT - 1 && cbulletMz <= cWarriorZT + 1 && cbulletMz >= cWarriorZT - 1) {
@@ -3889,15 +3744,9 @@ void zombieGetCloser(int val) {
 					}
 				}
 			}
-		}
-		/*for (int i = 0;i < 6;i++) {
-			for (int j = i + 1;j < 6;j++) {
-				if ((fabs(cZombieX[i] - cZombieX[j]) <= 0.2) && (fabs(cZombieX[i] - cZombieX[j]))
-			}
-		}*/
-
-		
+		}	
 	}
+
 	else if (level2 && fight && !monsterDie) {
 		int min = 0; // Minimum value
 		int max = 1; // Maximum value
@@ -3932,8 +3781,8 @@ void zombieGetCloser(int val) {
 			SoundEngine->play2D("audio/woohoo.mp3", false);
 		}		
 	}
-	printf("  monsterHealth: %i", monsterHealth);
-
+	//printf("  monsterHealth: %i", monsterHealth);
+	
 	glutPostRedisplay();
 	glutTimerFunc(350, zombieGetCloser, 0);
 }
@@ -3973,11 +3822,6 @@ void sound(int val) {
 			inBetweenLevels = false;
 			level2 = true;
 		}
-		/*else if (countDown == 0) {
-			inBetweenLevels = false;
-			level2 = true;
-		}*/
-
 	}
 
 	flicker = !flicker;
@@ -4150,17 +3994,12 @@ void fireObstaclesMove(int value) {
 
 
 void LoadAssets(){
-	// Loading Model files
 	model_home.Load("Models/home2/skull.3ds");
 	model_player.Load("Models/player/player.3DS");
 	model_zombie.Load("Models/zombie/zombie.3DS");
 	model_Gun.Load("Models/Gun/Gun.3ds");
 	model_coin.Load("Models/coin/Coin.3ds");
-	//model_fruit.Load("Models/fruit/fruit.3ds");
-	//model_rock.Load("Models/rock/rock.3DS");
-	//model_rock.Load("Models/home/target.3ds");
-
-
+	
 
 	// Loading texture files
 	tex_ground.Load("Textures/ground.bmp");
@@ -4175,6 +4014,8 @@ void LoadAssets(){
 	tex_two.Load("Textures/two.bmp");
 	tex_one.Load("Textures/one.bmp");
 	//tex_rock.Load("Textures/rock.bmp");
+
+
 	loadBMP(&tex, "Textures/blu-sky-3.bmp", true);
 	loadBMP(&tex6, "Textures/night.bmp", true);
 	loadBMP(&tex3, "Textures/fireBall.bmp", true);
