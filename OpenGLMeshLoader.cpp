@@ -2245,9 +2245,9 @@ void myKeyboard(unsigned char button, int x, int y)
 
 			}
 			else if (leftView) {
-				cGunX += 0.5;
-				cWarriorX += 0.5;
 				if (!(cWarriorX + 2 > 50)) {
+					cGunX += 0.5;
+					cWarriorX += 0.5;
 					for (int i = 0;i < 6;i++) {
 						if (cWarriorX >= cRockX[i] - 3 && cWarriorX <= cRockX[i] + 3 && cWarriorZ >= cRockZ[i] - 3 && cWarriorZ <= cRockZ[i] + 3) {
 							cGunX -= 0.5;
